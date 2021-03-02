@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydgraph
+argparse
+gunicorn
+ipaddress
+typing-extensions
+networkx

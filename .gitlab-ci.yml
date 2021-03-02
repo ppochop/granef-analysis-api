@@ -1,0 +1,31 @@
+# CI for automated build and publish of project containers
+
+build-branches:
+    image: docker:latest
+    stage: build
+    services:
+        - docker:dind
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    before_script:
+        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    script:
+        - docker build --pull -t "$IMAGE_TAG" .
+        - docker push "$IMAGE_TAG"
+    except:
+        - master
+
+build-latest:
+    image: docker:latest
+    stage: build
+    services:
+        - docker:dind
+    variables:
+        IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+    before_script:
+        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    script:
+        - docker build --pull -t "$IMAGE_TAG" .
+        - docker push "$IMAGE_TAG"
+    only:
+        - master
