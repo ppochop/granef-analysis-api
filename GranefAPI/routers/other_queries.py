@@ -22,8 +22,8 @@ from utilities.data_processing import DgraphDataProcessing
 router = APIRouter()
 
 
-@router.post("/custom", response_model=models.ResponseModel, summary="Perform custom query")
-def dgraph_query_custom(query: models.QueryModel):
+@router.post("/custom_query", response_model=models.ResponseModel, summary="Perform custom query using Dgraph Query Language.")
+def custom_query(query: models.QueryModel):
     """
     General function to process any Dgraph query given as a string. Result is provided as simple
     JSON response or extended by graph data according to desired query type.
