@@ -5,13 +5,18 @@
 Definition of queries functions for Granef API.
 """
 
+# Common Python modules
 import json
-from fastapi import APIRouter
 
-from dgraph_client import DgraphClient
-import models
-import queries_utils as qutils
-from data_processing import DgraphDataProcessing
+# FastAPI modules
+from fastapi import APIRouter   # FastAPI modules
+
+# GranefAPI
+from models import models     # Custom GranefAPI models
+from utilities import queries_utils as qutils     # Query utilities
+from utilities.dgraph_client import DgraphClient
+from utilities.data_processing import DgraphDataProcessing
+
 
 # Initialize FastAPI router
 router = APIRouter()
@@ -26,12 +31,12 @@ def dgraph_query_custom(query: models.QueryModel):
     dgraph_client = DgraphClient()
     dgraph_processing = DgraphDataProcessing(type=query.type, layout=query.layout)
 
-    # Perform query and raise HTTP exception if any error occures
+    # Perform query and raise HTTP exception if any error occurs
     try:
         # Preprocess query according to the query type
         result = dgraph_client.query(dgraph_processing.process_query(query.query))
     except Exception as e:
         qutils.raise_error(str(e))
 
-    # Process response accoring to the query type   
+    # Process response according to the query type   
     return {"response": dgraph_processing.process_response(response=json.loads(result))}

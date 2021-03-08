@@ -16,4 +16,4 @@ RUN apt-get update \
 	
 
 # Run service_arg_handler.py with arguments when container launches (CMD if there are no arguments) 
-ENTRYPOINT ["python3", "API/main.py"]
+ENTRYPOINT ["python3", "GranefAPI/main.py"]

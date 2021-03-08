@@ -5,14 +5,19 @@
 Definition of helper queries functions for Granef API.
 """
 
+# Common Python modules
 import ipaddress
 import socket
 from datetime import datetime
-from fastapi import HTTPException
 import json
 
-from dgraph_client import DgraphClient
-from data_processing import DgraphDataProcessing
+# FastAPI modules
+from fastapi import HTTPException
+
+# GranefAPI
+from utilities.dgraph_client import DgraphClient
+from utilities.data_processing import DgraphDataProcessing
+
 
 def check_ip_address(param_name, param_val):
     try:
