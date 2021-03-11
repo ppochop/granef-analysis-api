@@ -29,7 +29,7 @@ def custom_query(query: models.QueryModel):
     JSON response or extended by graph data according to desired query type.
     """
     dgraph_client = DgraphClient()
-    dgraph_processing = DgraphDataProcessing(type=query.type, layout=query.layout)
+    dgraph_processing = DgraphDataProcessing(type=query.return_type, layout=query.graph_layout)
 
     # Perform query and raise HTTP exception if any error occurs
     try:

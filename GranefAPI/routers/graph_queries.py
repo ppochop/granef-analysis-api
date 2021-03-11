@@ -46,3 +46,4 @@ def node_neighbors(uid: str, depth: int = 2, return_type: str = "json", graph_la
     """
     variables_dict = {"$uid": uid, "$depth": str(depth)}  
     return qutils.handle_query(query_body=query_body, query_header=query_header, variables=variables_dict, type=return_type, layout=graph_layout)
+z
