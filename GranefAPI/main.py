@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-"""
-Granef API to perform Dgraph queries and provide responses with defined layout.
+"""Granef API to perform Dgraph queries and provide responses with defined layout.
 
 The default configuration exposes API at 127.0.0.1:7000. To access Swagger documentation visit
 http://127.0.0.1:7000/docs.
@@ -27,23 +26,23 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Custom modules of Granef API
 from utilities.dgraph_client import DgraphClient
-from routers import graph_queries, overview_queries, other_queries
+from routers import general_queries
 
 
 # Application definition ("description" key may be added too).
 app = FastAPI(
     title="Granef API",
-    version="0.3",
+    version="0.5",
 )
 
 # Load API routers
-app.include_router(graph_queries.router, prefix="/graph", tags=["Graph queries"])
-app.include_router(overview_queries.router, prefix="/overview", tags=["Overview queries"])
-app.include_router(other_queries.router, tags=["General"])
+app.include_router(general_queries.router, tags=["General"])
+#app.include_router(graph_queries.router, prefix="/graph", tags=["Graph queries"])
+#app.include_router(overview_queries.router, prefix="/overview", tags=["Overview queries"])
 
 
 @app.get("/", summary="Get API information", tags=["General"])
-def get_root(request: Request):
+def get_root(request: Request) -> dict:
     """
     Default function to show Granef API name, version, and Swagger URL when root path is requested.
     """
@@ -51,11 +50,11 @@ def get_root(request: Request):
     return {"name": app.title, "version": app.version, "swagger": swagger_path}
 
 
-@app.get("/connect", summary="Establish connection to Dgraph database", tags=["General"])
-def dgraph_connect():
+@app.get("/connect", summary="Re-establish connection to the Dgraph database server", tags=["General"])
+def dgraph_connect() -> dict:
     """
-    Establish connection to Dgraph database server. When API starts the connection is automatically
-    established. Call this function onl if some connection error occurred.
+    The connection is automatically established with Granef API start. Call this function only if some
+    connection error occurred.
     """
     dgraph_client = DgraphClient()
     try:

@@ -16,7 +16,6 @@ from fastapi import HTTPException
 
 # GranefAPI
 from utilities.dgraph_client import DgraphClient
-from utilities.data_processing import DgraphDataProcessing
 
 
 def check_ip_address(param_name, param_val):
@@ -92,7 +91,6 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
     extended by graph data according to desired query type.
     """
     dgraph_client = DgraphClient()
-    dgraph_processing = DgraphDataProcessing(type=type, layout=layout)
     processed_query_str = query_header + dgraph_processing.process_query(query_body)
 
     # Perform query and raise HTTP exception if any error occures

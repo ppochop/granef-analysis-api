@@ -5,12 +5,16 @@
 Definition of graph queries for Granef web user interface.
 """
 
+# Common Python modules
+import json
+
 # FastAPI modules
-from fastapi import APIRouter   # FastAPI modules
+from fastapi import APIRouter
+from fastapi import HTTPException
 
 # GranefAPI
 from models import models     # Custom GranefAPI models
-from utilities import queries_utils as qutils     # Query utilities
+from utilities.dgraph_client import DgraphClient
 
 
 # Initialize FastAPI router
@@ -18,9 +22,12 @@ router = APIRouter()
 
 
 @router.get("/node_attributes",
-    response_model=models.ResponseModel, 
+    response_model=models.GeneralQueryResponseModel, 
     summary="Get all node attributes for a given node uid")
 def node_attributes(uid: str, return_type: str = "json", graph_layout: str = "sfdp"):
+    """
+    """
+
     query_header = "query getAllNodeAttributes($uid: string)"
     query_body = """{ 
         getAllNodeAttributes(func: uid($uid)) { 
