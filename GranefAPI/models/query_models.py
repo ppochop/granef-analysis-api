@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""Query data models for Granef API.
+"""
+Query data models for Granef API.
 
 Documentation: https://fastapi.tiangolo.com/tutorial/body-nested-models/
 """

@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""Definition of general queries functions for Granef API.
+"""
+Definition of general queries functions for Granef API.
 
 Contains custom queries that do not fall into any of the specific categories.
 """
@@ -33,13 +34,10 @@ def custom_query(query: query_models.CustomQuery) -> dict:
 
     # Perform query and raise HTTP exception if any error occurs
     try:
-        # Preprocess query according to the query type
         result = dgraph_client.query(query.query)
     except Exception as e:
         raise HTTPException(
             status_code = 500,
             detail = str(e)
         )
-
-    # Process response according to the query type   
     return {"response": json.loads(result)}
