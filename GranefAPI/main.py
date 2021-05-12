@@ -46,6 +46,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Custom modules of Granef API
 from utilities.dgraph_client import DgraphClient
+
 from routers import general_queries, overview_queries, graph_queries, flow_queries
 
 
