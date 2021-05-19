@@ -28,30 +28,30 @@ def subnet_info(subnet_mask: str, protocol: str, from_timestamp: str, to_timesta
     dgraph_client = DgraphClient()
 
     query_variables = {subnet_mask: "string", protocol: "string", from_timestamp: "string", to_timestamp: "string"}
-    query = """{ 
-        getSubnetConnections(func: allof(host.ip, cidr, {subnet_mask})) { 
+    query = f"""{{ 
+        getSubnetConnections(func: allof(host.ip, cidr, "{subnet_mask}")) {{ 
             label : host.ip
             host.ip
-            host.originated @filter(ge(connection.Start_Time_first_seen, {from_timestamp}) AND le(connection.End_Time_last_seen, {to_timestamp})) {
-                connection.produced @filter(eq(dgraph.type, {protocol})) {
+            host.originated @filter(ge(connection.Start_Time_first_seen, "{from_timestamp}") AND le(connection.End_Time_last_seen, "{to_timestamp}")) {{
+                connection.produced @filter(eq(dgraph.type, "{protocol}")) {{
                     expand(_all_)
-                }
-                ~host.responded {
+                }}
+                ~host.responded {{
                     label : host.ip
                     host.ip
-                }
-            }
-            host.responded @filter(ge(connection.Start_Time_first_seen, {from_timestamp}) AND le(connection.End_Time_last_seen, {to_timestamp})) {
-                connection.produced @filter(eq(dgraph.type, {protocol})) {
+                }}
+            }}
+            host.responded @filter(ge(connection.Start_Time_first_seen, "{from_timestamp}") AND le(connection.End_Time_last_seen, "{to_timestamp}")) {{
+                connection.produced @filter(eq(dgraph.type, {"protocol"})) {{
                     expand(_all_)
-                }
-                ~host.originated {
+                }}
+                ~host.originated {{
                     label : host.ip
                     host.ip
-                }
-            }    
-        } 
-    }"""
+                }}
+            }}    
+        }}
+    }}"""
 
     # Perform query and raise HTTP exception if any error occurs
     try:
@@ -70,19 +70,19 @@ def connection_info(from_timestamp: str, to_timestamp: str, type: str = "json", 
     dgraph_client = DgraphClient()
     
     query_variables = {from_timestamp: "string", to_timestamp: "string"}
-    query = """{
-        getConnections(func: has(host.ip)) {
+    query = f"""{{
+        getConnections(func: has(host.ip)) {{
             label : host.ip
             host.ip
-            host.originated @filter(ge(connection.Start_Time_first_seen, "{from_timestamp}") AND le(connection.End_Time_last_seen, "{to_timestamp}")) {
+            host.originated @filter(ge(connection.Start_Time_first_seen, "{from_timestamp}") AND le(connection.End_Time_last_seen, "{to_timestamp}")) {{
                 expand(connection)
-                ~host.responded {
+                ~host.responded {{
                     label : host.ip
                     host.ip
-                }
-            }
-        }
-    }"""
+                }}
+            }}
+        }}
+    }}"""
 
     # Perform query and raise HTTP exception if any error occurs
     try:
@@ -107,20 +107,20 @@ def communicated_hosts(host_ip: str, type: str = "json", layout: str = "sfdp"):
     dgraph_client = DgraphClient()
     
     query_variables = {host_ip: "string"}
-    query = """{
-        getCommunicatedHosts(func: allof(host.ip, cidr, {host_ip})) { 
+    query = f"""{{
+        getCommunicatedHosts(func: allof(host.ip, cidr, "{host_ip}")) {{ 
             label : host.ip
             host.ip
-            host.communicated {
+            host.communicated {{
                 label : host.ip
                 host.ip
-                host.hostname {
+                host.hostname {{
                     label: hostname.type
                     hostname.name
-                }
-            }
-        } 
-    }"""
+                }}
+            }}
+        }} 
+    }}"""
 
     # Perform query and raise HTTP exception if any error occurs
     try:
@@ -145,26 +145,27 @@ def connection_between_two_hosts(host_ip1: str, host_ip2: str, from_timestamp: s
     dgraph_client = DgraphClient()
     
     query_variables = {host_ip1: "string", host_ip2: "string", from_timestamp: "string", to_timestamp: "string"}
-    query = """{
-        var(func: eq(host.ip, {host_ip1})) {
-            connectionsWithWantedHost as host.originated @cascade {
-                ~host.responded @filter(eq(host.ip, {host_ip2})) {}
-            }
-        }
-        getConnectionsBetweenTwoHosts(func: uid(connectionsWithWantedHost)) {
+    query = f"""{{
+        var(func: eq(host.ip, "{host_ip1}")) {{
+            connectionsWithWantedHost as host.originated @cascade {{
+                ~host.responded @filter(eq(host.ip, "{host_ip2}")) {{}}
+            }}
+        }}
+        getConnectionsBetweenTwoHosts(func: uid(connectionsWithWantedHost)) {{
             expand(connection)
-            ~host.originated @filter(ge(connection.Start_Time_first_seen, {from_timestamp}) AND le(connection.End_Time_last_seen, {to_timestamp})) {
+
+            ~host.originated @filter(ge(connection.Start_Time_first_seen, "{from_timestamp}") AND le(connection.End_Time_last_seen, "{to_timestamp}")) {{
                 label : host.ip
-                host.hostname {
+                host.hostname {{
                     label: hostname.type
                     hostname.name
-                }
-            }
-            connection.produced @filter(ge(connection.Start_Time_first_seen, {from_timestamp}) AND le(connection.End_Time_last_seen, {to_timestamp})) {
+                }}
+            }}
+            connection.produced @filter(ge(connection.Start_Time_first_seen, "{from_timestamp}") AND le(connection.End_Time_last_seen, "{to_timestamp}")) {{
                 expand(_all_)
-            }
-        }
-    }"""
+            }}
+        }}
+    }}"""
 
     # Perform query and raise HTTP exception if any error occurs
     try:
