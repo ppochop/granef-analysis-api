@@ -1,7 +1,9 @@
 The following software may be included in this application:
 
+-------------------------------------------------------------------------------
 
 * FastAPI - https://github.com/tiangolo/fastapi/blob/master/LICENSE
+
 
 Copyright (c) 2018 Sebastián Ramírez
 
@@ -22,3 +24,113 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+
+-------------------------------------------------------------------------------
+
+* Uvicorn - https://github.com/encode/uvicorn/blob/master/LICENSE.md
+
+
+Copyright © 2017-present, [Encode OSS Ltd](http://www.encode.io/).
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+-------------------------------------------------------------------------------
+
+*  Pydgraph - https://github.com/dgraph-io/pydgraph/blob/master/LICENSE
+
+
+Copyright 2021 Dgraph Labs, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+-------------------------------------------------------------------------------
+
+* Argparse - https://github.com/ThomasWaldmann/argparse/blob/master/LICENSE.txt
+
+
+argparse is (c) 2006-2009 Steven J. Bethard <steven.bethard@gmail.com>.
+
+The argparse module was contributed to Python as of Python 2.7 and thus
+was licensed under the Python license. Same license applies to all files in
+the argparse package project.
+
+For details about the Python License, please see doc/Python-License.txt.
+
+History
+-------
+
+Before (and including) argparse 1.1, the argparse package was licensed under
+Apache License v2.0.
+
+After argparse 1.1, all project files from the argparse project were deleted
+due to license compatibility issues between Apache License 2.0 and GNU GPL v2.
+
+The project repository then had a clean start with some files taken from
+Python 2.7.1, so definitely all files are under Python License now.
+
+
+-------------------------------------------------------------------------------
+
+* Gunicorn - https://github.com/benoitc/gunicorn/blob/master/LICENSE
+
+  
+2009-2018 (c) Benoît Chesneau <benoitc@e-engura.org>
+2009-2015 (c) Paul J. Davis <paul.joseph.davis@gmail.com>
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
