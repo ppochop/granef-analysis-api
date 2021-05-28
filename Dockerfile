@@ -28,7 +28,7 @@ WORKDIR /usr/local/bin/granef
 COPY . /usr/local/bin/granef
 
 # Install Python
-RUN apk add --update --no-cache g++ musl-dev libffi-dev \
+RUN apk add --update --no-cache g++ musl-dev libffi-dev libstdc++ \
 	&& pip3 install --trusted-host pypi.python.org --no-cache-dir -r requirements.txt \
 	&& apk del g++ musl-dev libffi-dev
 	
