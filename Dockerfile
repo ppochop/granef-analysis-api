@@ -28,9 +28,9 @@ WORKDIR /usr/local/bin/granef
 COPY . /usr/local/bin/granef
 
 # Install Python
-RUN apk add --update --no-cache g++ \
+RUN apk add --update --no-cache g++ musl-dev libffi-dev \
 	&& pip3 install --trusted-host pypi.python.org --no-cache-dir -r requirements.txt \
-	&& apk del g++
+	&& apk del g++ musl-dev libffi-dev
 	
 # Run service_arg_handler.py with arguments when container launches (CMD if there are no arguments) 
 ENTRYPOINT ["python3", "GranefAPI/main.py"]
