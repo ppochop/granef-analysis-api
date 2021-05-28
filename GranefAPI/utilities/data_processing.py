@@ -129,8 +129,7 @@ class DgraphDataProcessing:
         :return: Graph in dictionary format with attributes required by the visualization.
         """
         # Set layout
-        layout = nx.nx_agraph.graphviz_layout(self.__graph, prog=self.__layout)
-        #layout = nx.spring_layout(self.__graph)
+        layout = nx.spring_layout(self.__graph)
 
         # Generate data
         graph_dict = {"nodes": [], "edges": []}
