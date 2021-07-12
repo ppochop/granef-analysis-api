@@ -42,7 +42,7 @@ def subnet_info(subnet_mask: str, protocol: str, from_timestamp: str, to_timesta
                 }}
             }}
             host.responded @filter(ge(connection.Start_Time_first_seen, "{from_timestamp}") AND le(connection.End_Time_last_seen, "{to_timestamp}")) {{
-                connection.produced @filter(eq(dgraph.type, {"protocol"})) {{
+                connection.produced @filter(eq(dgraph.type, "{protocol}")) {{
                     expand(_all_)
                 }}
                 ~host.originated {{
