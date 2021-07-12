@@ -36,6 +36,7 @@ from fastapi import HTTPException
 
 # GranefAPI
 from models import query_models
+from utilities import processing
 from utilities.dgraph_client import DgraphClient
 
 
@@ -54,7 +55,7 @@ def custom_query(query: query_models.CustomQuery) -> dict:
 
     # Perform query and raise HTTP exception if any error occurs
     try:
-        result = dgraph_client.query(query.query)
+        result = dgraph_client.query(processing.add_default_attributes(query.query))
     except Exception as e:
         raise HTTPException(
             status_code = 500,
