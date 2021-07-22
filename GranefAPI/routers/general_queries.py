@@ -36,7 +36,7 @@ from fastapi import HTTPException
 
 # GranefAPI
 from models import query_models
-from utilities import processing
+from utilities import preprocessing
 from utilities.dgraph_client import DgraphClient
 
 
@@ -45,20 +45,12 @@ router = APIRouter()
 
 
 @router.post("/custom_query",
-    response_model=query_models.GeneralResponse,
+    response_model=query_models.GeneralResponseDict,
     summary="Universal function allowing to define a custom query using Dgraph Query Language")
 def custom_query(query: query_models.CustomQuery) -> dict:
     """
     See examples of Dgraph Query Language (DQL) at https://dgraph.io/docs/query-language/graphql-fundamentals/.
     """
     dgraph_client = DgraphClient()
-
-    # Perform query and raise HTTP exception if any error occurs
-    try:
-        result = dgraph_client.query(processing.add_default_attributes(query.query))
-    except Exception as e:
-        raise HTTPException(
-            status_code = 500,
-            detail = str(e)
-        )
+    result = dgraph_client.query(preprocessing.add_default_attributes(query.query))
     return {"response": json.loads(result)}

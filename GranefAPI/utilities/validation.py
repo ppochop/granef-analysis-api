@@ -28,6 +28,9 @@ Definition of functions to ease data validation.
 # Common Python modules
 import ipaddress
 
+# FastAPI modules
+from fastapi import HTTPException
+
 
 def is_address(address: str) -> bool:
     """Validation of a given sting if its IPv4 and IPv6 address.
@@ -41,6 +44,30 @@ def is_address(address: str) -> bool:
     try:
         ipaddress.ip_network(address)
         return True
-    except OSError:
+    except (OSError, ValueError):
         pass
     return False
+
+
+def validate(variable, type: str) -> bool:
+    """Universal validation function that raise HTTPException if the variable is not valid.
+
+    Args:
+        variable (any type): Variable that should be validated.
+        type (str): Required type of the variable. Available options: address
+
+    Raises:
+        HTTPException (status 400): Details about the validations if the variable is not valid.
+
+    Returns:
+        bool: True if given variable is valid, False othervise.
+    """
+    if type == "address":
+        if not is_address(variable):
+            raise HTTPException(
+                status_code = 400,
+                detail = f"Given address '{variable}' is not valid IPv4, IPv6 address, or CIDR notation."
+            )
+        return True
+    else:
+        return False

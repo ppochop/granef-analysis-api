@@ -30,12 +30,14 @@ import re
 
 
 def add_default_attributes(query: str, attributes: list[str] = ["uid", "dgraph.type"]) -> str:
-    """
-    Add specified attributes to all nodes of the query.
+    """Add specified attributes to all nodes of the query.
 
-    :param query: Dgraph query to process.
-    :param attributes: List of attributes that should be added to the each query node if they are not present.
-    :return: Query transformed according to the requirements specified by a type of the query.
+    Args:
+        query (str): Dgraph query to process.
+        attributes (list[str], optional): List of attributes that should be added to the each query node if they are not present. Defaults to ["uid", "dgraph.type"].
+
+    Returns:
+        str: Query transformed according to the requirements specified by a type of the query.
     """
     # Remove line endings and reduce spaces
     reduced_query = re.sub(" +", " ", re.sub("\n|\r|\t", "", query))

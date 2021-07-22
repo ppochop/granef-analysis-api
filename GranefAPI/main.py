@@ -21,14 +21,14 @@
 #
 
 
-"""
-Granef API to perform Dgraph queries and provide responses with defined layout.
+"""Granef API to perform Dgraph queries and provide responses with defined layout.
 
 The default configuration exposes API at 127.0.0.1:7000. To access Swagger documentation visit
 http://127.0.0.1:7000/docs.
 
-Usage:  $ python3 main.py
-        $ python3 main.py --ip "172.23.79.229"
+Examples:
+    $ python3 main.py
+    $ python3 main.py --ip "172.23.79.229"
 """
 
 #

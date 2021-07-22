@@ -36,5 +36,8 @@ from typing import Optional
 class CustomQuery(BaseModel):
     query: str = Field(None, example='{getHost(func: allof(host.ip, cidr, "192.168.0.0/16")) {host.ip}}')
 
-class GeneralResponse(BaseModel):
+class GeneralResponseDict(BaseModel):
     response: dict = Field(None, example='{"getHost": [{"host.ip": "192.168.0.2"}, {"host.ip": "192.168.1.16"}]}')
+
+class GeneralResponseList(BaseModel):
+    response: list = Field(None, example='[{"host.ip": "192.168.0.2"}, {"host.ip": "192.168.1.16"}]')

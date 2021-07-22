@@ -33,7 +33,7 @@ from fastapi import HTTPException
 
 # GranefAPI
 from models import query_models
-from utilities import validation, processing
+from utilities import validation, preprocessing
 from utilities.dgraph_client import DgraphClient
 
 
@@ -42,21 +42,19 @@ router = APIRouter()
 
 
 @router.get("/hosts_info",
-    response_model=query_models.GeneralResponse,
+    response_model=query_models.GeneralResponseList,
     summary="Information about hosts in a given network range (CIDR).")
 def hosts_info(address: str) -> dict:
     """
     Get detailed attributes and statitsics about hosts in the given network range.
     """
-    if not validation.is_address(address):
-        raise HTTPException(
-            status_code = 400,
-            detail = f"Given address {address} is not valid IPv4, IPv6 address, or CIDR notation."
-        )
+    # Validate IP address and raise exception if not valid
+    validation.validate(address, "address")
+    
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        getStatistics(func: allof(host.ip, cidr, "{address}")) {{
+        hosts_info(func: allof(host.ip, cidr, "{address}")) {{
             host.ip
             host.hostname {{
                 hostname.name
@@ -76,11 +74,5 @@ def hosts_info(address: str) -> dict:
     }}"""
 
     # Perform query and raise HTTP exception if any error occurs
-    try:
-        result = dgraph_client.query(processing.add_default_attributes(query))
-    except Exception as e:
-        raise HTTPException(
-            status_code = 500,
-            detail = str(e)
-        )
-    return {"response": json.loads(result)}
+    result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
+    return {"response": result["hosts_info"]}
