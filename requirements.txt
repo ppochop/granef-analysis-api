@@ -5,4 +5,3 @@ argparse
 gunicorn
 ipaddress
 typing-extensions
-networkx
