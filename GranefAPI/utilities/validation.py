@@ -62,12 +62,20 @@ def validate(variable, type: str) -> bool:
     Returns:
         bool: True if given variable is valid, False othervise.
     """
+    # Default validation response
+    validation_result = False
+    validation_fail_detail = ""
+
+    # Validate given variable according to the requested type
     if type == "address":
-        if not is_address(variable):
-            raise HTTPException(
-                status_code = 400,
-                detail = f"Given address '{variable}' is not valid IPv4, IPv6 address, or CIDR notation."
-            )
-        return True
-    else:
-        return False
+        validation_result = is_address(variable)
+        validation_fail_detail = f"Given address '{variable}' is not valid IPv4, IPv6 address, or CIDR notation."
+
+    # Raise HTTPException if the validation failed
+    if not validation_result:
+        raise HTTPException(
+            status_code = 400,
+            detail = validation_fail_detail
+        )
+
+    return validation_result
