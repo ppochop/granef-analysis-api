@@ -27,9 +27,10 @@ Custom functions to ease data processing in Granef API.
 
 # Common Python modules
 import re
+from typing import List
 
 
-def add_default_attributes(query: str, attributes: list[str] = ["uid", "dgraph.type"]) -> str:
+def add_default_attributes(query: str, attributes: List[str] = ["uid", "dgraph.type"]) -> str:
     """Add specified attributes to all nodes of the query.
 
     Args:
