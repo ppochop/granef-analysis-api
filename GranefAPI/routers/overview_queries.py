@@ -76,3 +76,36 @@ def hosts_info(address: str) -> dict:
     # Perform query and raise HTTP exception if any error occurs
     result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
     return {"response": result["hosts_info"]}
+
+
+@router.get("/connections_from_subnet",
+    response_model=query_models.GeneralResponseList,
+    summary="Connections originated by hosts in a given network range (CIDR).")
+def connections_from_subnet(address: str) -> dict:
+    """
+    Get all connections withn the given subnet.
+    """
+    # Validate IP address and raise exception if not valid
+    validation.validate(address, "address")
+
+    dgraph_client = DgraphClient()
+
+    query = f"""{{
+	    connections_from_subnet(func: allof(host.ip, cidr, "{address}")) @cascade {{
+            host.ip
+            host.originated {{
+                connection.ts
+                connection.orig_p
+                connection.resp_p
+                connection.proto
+                connection.conn_state
+                ~host.responded {{
+				    host.ip
+                }}
+            }}
+        }}
+    }}"""
+
+    # Perform query and raise HTTP exception if any error occurs
+    result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
+    return {"response": result["connections_from_subnet"]}
