@@ -46,7 +46,7 @@ router = APIRouter()
     summary="Get all node attributes for given nodes uid")
 def node_attributes(uids: str) -> dict:
     """
-    Get all attributes of given nodes uid (separated by comma).
+    Get all node attributes for given nodes uid (separated by comma).
     """
     dgraph_client = DgraphClient()
 
@@ -59,3 +59,23 @@ def node_attributes(uids: str) -> dict:
     # Perform query and raise HTTP exception if any error occurs
     result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
     return {"response": result["node_attributes"]}
+
+
+@router.get("/attribute_search",
+    response_model=query_models.GeneralResponseList, 
+    summary="Search nodes with agiven attribute and value")
+def attribute_search(attribute: str, value: str) -> dict:
+    """
+    Get all nodes containing the given attribute and value (wide range query that sometimes takes too long).
+    """
+    dgraph_client = DgraphClient()
+
+    query = f"""{{
+        attribute_search(func: has({attribute})) @filter(eq({attribute}, {value})) {{
+            expand(_all_)
+        }} 
+    }}"""
+
+    # Perform query and raise HTTP exception if any error occurs
+    result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
+    return {"response": result["attribute_search"]}
