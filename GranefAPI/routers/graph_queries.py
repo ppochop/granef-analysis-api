@@ -79,3 +79,29 @@ def attribute_search(attribute: str, value: str) -> dict:
     # Perform query and raise HTTP exception if any error occurs
     result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
     return {"response": result["attribute_search"]}
+
+
+@router.get("/uids_time_range",
+    response_model=query_models.GeneralResponseDict,
+    summary="Return minimal and maximal connection.ts for given uids")
+def uids_time_range(uids: str) -> dict:
+    """
+    Get min and max connection.ts for a given list of uids (comma separated). Return null values if uid was not found.
+    """
+    dgraph_client = DgraphClient()
+
+    query = f"""{{
+        var(func: uid({uids})) {{
+		    time as connection.ts
+        }}
+        time_range() {{
+		    time.min: min(val(time))
+            time.max: max(val(time))
+        }}
+    }}"""
+
+    # Perform query and raise HTTP exception if any error occurs
+    result = json.loads(dgraph_client.query(query))
+    # Merge results (provided as list of dictionaries) into one dictionary
+    times = {**result["time_range"][0], **result["time_range"][1]}
+    return {"response": times}
