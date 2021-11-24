@@ -94,7 +94,7 @@ def uids_time_range(uids: str) -> dict:
         var(func: uid({uids})) {{
 		    time as connection.ts
         }}
-        time_range() {{
+        uids_time_range() {{
 		    connection.ts.min: min(val(time))
             connection.ts.max: max(val(time))
         }}
@@ -103,5 +103,6 @@ def uids_time_range(uids: str) -> dict:
     # Perform query and raise HTTP exception if any error occurs
     result = json.loads(dgraph_client.query(query))
     # Merge results (provided as list of dictionaries) into one dictionary
-    times = {**result["time_range"][0], **result["time_range"][1]}
-    return {"response": times}
+    timestamps = {**result["uids_time_range"][0], **result["uids_time_range"][1]}
+    return {"response": timestamps}
+
