@@ -86,7 +86,7 @@ def attribute_search(attribute: str, value: str) -> dict:
     summary="Return minimal and maximal connection.ts for given uids")
 def uids_time_range(uids: str) -> dict:
     """
-    Get min and max connection.ts for a given list of uids (comma separated). Return null values if uid was not found.
+    Get min and max connection.ts for a given list of uids (comma separated). Return null values if no uid with connection.ts attribute was found.
     """
     dgraph_client = DgraphClient()
 
