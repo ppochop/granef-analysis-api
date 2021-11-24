@@ -106,3 +106,24 @@ def uids_time_range(uids: str) -> dict:
     timestamps = {**result["uids_time_range"][0], **result["uids_time_range"][1]}
     return {"response": timestamps}
 
+
+@router.get("/uids_timestamp_filter",
+    response_model=query_models.GeneralResponseDict,
+    summary="Filter given uids and reutnr only one in the given time range")
+def uids_time_filter(uids: str, timestamp_min: str, timestamp_max: str) -> dict:
+    """
+    Select uids from the given list of uids (comma separated) that match the given timestamp range. Return empty array if no uid match the timestamp range.
+    """
+    dgraph_client = DgraphClient()
+
+    query = f"""{{
+        uids_timestamp_filter(func: uid({uids})) @filter(ge(connection.ts, "{timestamp_min}") and le(connection.ts, "{timestamp_max}")) {{
+		    uid
+        }}
+    }}"""
+
+    # Perform query and raise HTTP exception if any error occurs
+    result = json.loads(dgraph_client.query(query))
+    # Merge uid values (dicts in list) to list
+    uids = {"uids": [d["uid"] for d in result["uids_timestamp_filter"]]}
+    return {"response": uids}
