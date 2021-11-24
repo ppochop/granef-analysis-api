@@ -95,8 +95,8 @@ def uids_time_range(uids: str) -> dict:
 		    time as connection.ts
         }}
         time_range() {{
-		    time.min: min(val(time))
-            time.max: max(val(time))
+		    connection.ts.min: min(val(time))
+            connection.ts.max: max(val(time))
         }}
     }}"""
 
