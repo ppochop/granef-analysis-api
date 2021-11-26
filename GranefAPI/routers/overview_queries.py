@@ -41,7 +41,7 @@ from utilities.dgraph_client import DgraphClient
 router = APIRouter()
 
 
-@router.get("/hosts_info",
+@router.post("/hosts_info",
     response_model=query_models.GeneralResponseList,
     summary="Information about hosts in a given network range (CIDR).")
 def hosts_info(address: str) -> dict:
@@ -78,7 +78,7 @@ def hosts_info(address: str) -> dict:
     return {"response": result["hosts_info"]}
 
 
-@router.get("/connections_from_subnet",
+@router.post("/connections_from_subnet",
     response_model=query_models.GeneralResponseList,
     summary="Connections originated by hosts in a given network range (CIDR).")
 def connections_from_subnet(address: str) -> dict:

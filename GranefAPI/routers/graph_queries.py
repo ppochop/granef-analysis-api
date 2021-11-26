@@ -41,7 +41,7 @@ from utilities.dgraph_client import DgraphClient
 router = APIRouter()
 
 
-@router.get("/node_attributes",
+@router.post("/node_attributes",
     response_model=query_models.GeneralResponseList, 
     summary="Get all node attributes for given nodes uid")
 def node_attributes(uids: str) -> dict:
@@ -61,7 +61,7 @@ def node_attributes(uids: str) -> dict:
     return {"response": result["node_attributes"]}
 
 
-@router.get("/attribute_search",
+@router.post("/attribute_search",
     response_model=query_models.GeneralResponseList, 
     summary="Search nodes with agiven attribute and value")
 def attribute_search(attribute: str, value: str) -> dict:
@@ -81,7 +81,7 @@ def attribute_search(attribute: str, value: str) -> dict:
     return {"response": result["attribute_search"]}
 
 
-@router.get("/uids_time_range",
+@router.post("/uids_time_range",
     response_model=query_models.GeneralResponseDict,
     summary="Return minimal and maximal connection.ts for given uids")
 def uids_time_range(uids: str) -> dict:
@@ -107,7 +107,7 @@ def uids_time_range(uids: str) -> dict:
     return {"response": timestamps}
 
 
-@router.get("/uids_timestamp_filter",
+@router.post("/uids_timestamp_filter",
     response_model=query_models.GeneralResponseDict,
     summary="Filter given uids and reutnr only one in the given time range")
 def uids_time_filter(uids: str, timestamp_min: str, timestamp_max: str) -> dict:
