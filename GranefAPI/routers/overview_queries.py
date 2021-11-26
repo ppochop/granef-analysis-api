@@ -44,17 +44,17 @@ router = APIRouter()
 @router.post("/hosts_info",
     response_model=query_models.GeneralResponseList,
     summary="Information about hosts in a given network range (CIDR).")
-def hosts_info(address: str) -> dict:
+def hosts_info(request: query_models.AddressQuery) -> dict:
     """
     Get detailed attributes and statitsics about hosts in the given network range.
     """
     # Validate IP address and raise exception if not valid
-    validation.validate(address, "address")
+    validation.validate(request.address, "address")
     
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        hosts_info(func: allof(host.ip, cidr, "{address}")) {{
+        hosts_info(func: allof(host.ip, cidr, "{request.address}")) {{
             host.ip
             host.hostname {{
                 hostname.name
@@ -81,17 +81,17 @@ def hosts_info(address: str) -> dict:
 @router.post("/connections_from_subnet",
     response_model=query_models.GeneralResponseList,
     summary="Connections originated by hosts in a given network range (CIDR).")
-def connections_from_subnet(address: str) -> dict:
+def connections_from_subnet(request: query_models.AddressQuery) -> dict:
     """
-    Get all connections withn the given subnet.
+    Get all connections within the given subnet.
     """
     # Validate IP address and raise exception if not valid
-    validation.validate(address, "address")
+    validation.validate(request.address, "address")
 
     dgraph_client = DgraphClient()
 
     query = f"""{{
-	    connections_from_subnet(func: allof(host.ip, cidr, "{address}")) @cascade {{
+	    connections_from_subnet(func: allof(host.ip, cidr, "{request.address}")) @cascade {{
             host.ip
             host.originated {{
                 connection.ts

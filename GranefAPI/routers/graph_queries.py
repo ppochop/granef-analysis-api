@@ -44,14 +44,14 @@ router = APIRouter()
 @router.post("/node_attributes",
     response_model=query_models.GeneralResponseList, 
     summary="Get all node attributes for given nodes uid")
-def node_attributes(uids: str) -> dict:
+def node_attributes(request: query_models.UidsQuery) -> dict:
     """
     Get all node attributes for given nodes uid (separated by comma).
     """
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        node_attributes(func: uid({uids})) {{
+        node_attributes(func: uid({request.uids})) {{
             expand(_all_)
         }} 
     }}"""
@@ -63,15 +63,15 @@ def node_attributes(uids: str) -> dict:
 
 @router.post("/attribute_search",
     response_model=query_models.GeneralResponseList, 
-    summary="Search nodes with agiven attribute and value")
-def attribute_search(attribute: str, value: str) -> dict:
+    summary="Search nodes with a given attribute and value")
+def attribute_search(request: query_models.AttributeValueQuery) -> dict:
     """
     Get all nodes containing the given attribute and value (wide range query that sometimes takes too long).
     """
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        attribute_search(func: has({attribute})) @filter(eq({attribute}, {value})) {{
+        attribute_search(func: has({request.attribute})) @filter(eq({request.attribute}, {request.value})) {{
             expand(_all_)
         }} 
     }}"""
@@ -84,14 +84,14 @@ def attribute_search(attribute: str, value: str) -> dict:
 @router.post("/uids_time_range",
     response_model=query_models.GeneralResponseDict,
     summary="Return minimal and maximal connection.ts for given uids")
-def uids_time_range(uids: str) -> dict:
+def uids_time_range(request: query_models.UidsQuery) -> dict:
     """
     Get min and max connection.ts for a given list of uids (comma separated). Return null values if no uid with connection.ts attribute was found.
     """
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        var(func: uid({uids})) {{
+        var(func: uid({request.uids})) {{
 		    time as connection.ts
         }}
         uids_time_range() {{
@@ -109,15 +109,15 @@ def uids_time_range(uids: str) -> dict:
 
 @router.post("/uids_timestamp_filter",
     response_model=query_models.GeneralResponseDict,
-    summary="Filter given uids and reutnr only one in the given time range")
-def uids_time_filter(uids: str, timestamp_min: str, timestamp_max: str) -> dict:
+    summary="Filter given uids and return only one in the given time range")
+def uids_time_filter(request: query_models.UidsTimestampsRangeQuery) -> dict:
     """
     Select uids from the given list of uids (comma separated) that match the given timestamp range. Return empty array if no uid match the timestamp range.
     """
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        uids_timestamp_filter(func: uid({uids})) @filter(ge(connection.ts, "{timestamp_min}") and le(connection.ts, "{timestamp_max}")) {{
+        uids_timestamp_filter(func: uid({request.uids})) @filter(ge(connection.ts, "{request.timestamp_min}") and le(connection.ts, "{request.timestamp_max}")) {{
 		    uid
         }}
     }}"""

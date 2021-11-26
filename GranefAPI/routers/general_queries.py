@@ -47,10 +47,10 @@ router = APIRouter()
 @router.post("/custom_query",
     response_model=query_models.GeneralResponseDict,
     summary="Universal function allowing to define a custom query using Dgraph Query Language")
-def custom_query(query: query_models.CustomQuery) -> dict:
+def custom_query(request: query_models.CustomQuery) -> dict:
     """
     See examples of Dgraph Query Language (DQL) at https://dgraph.io/docs/query-language/graphql-fundamentals/.
     """
     dgraph_client = DgraphClient()
-    result = dgraph_client.query(preprocessing.add_default_attributes(query.query))
+    result = dgraph_client.query(preprocessing.add_default_attributes(request.query))
     return {"response": json.loads(result)}
