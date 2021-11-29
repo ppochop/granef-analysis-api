@@ -46,7 +46,7 @@ class AttributeValueQuery(BaseModel):
 class UidsTimestampsRangeQuery(BaseModel):
     uids: str = Field(None, example='0x12, 0x9c882')
     timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
-    timestamp_max: str = Field(None, example='2008-07-22T01:51:07.095278Z')
+    timestamp_max: str = Field(None, example='2008-07-22T01:55')
 
 class AddressQuery(BaseModel):
     address: str = Field(None, example='192.168.15.0/24')
