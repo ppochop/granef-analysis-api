@@ -26,6 +26,7 @@ Definition of queries providing an interactivity for graph analysis.
 
 # Common Python modules
 import json
+from typing import List
 
 # FastAPI modules
 from fastapi import APIRouter
@@ -127,3 +128,42 @@ def uids_time_filter(request: query_models.UidsTimestampsRangeQuery) -> dict:
     # Merge uid values (dicts in list) to list
     uids = {"uids": [d["uid"] for d in result["uids_timestamp_filter"]]}
     return {"response": uids}
+
+
+@router.post("/neighbors",
+    response_model=query_models.GeneralResponseList,
+    summary="Return all details for neighbor nodes of a given type for a given set of uids")
+def neighbors(request: query_models.UidsTypeQuery) -> dict:
+    """
+    Get all attributes for a given set of uids and their neighbors of a specified type defined in database schema (comma separated).
+    If "types" attribute is not specified (or is empty), than the function returns all nodes regardless of their type.
+    """
+    # If the "types" request value is not specified, use "_all_" in expand() function
+    types = request.types if request.types else "_all_"
+
+    dgraph_client = DgraphClient()
+
+    query = f"""{{
+        neighbors(func: uid({request.uids})) {{
+            expand(_all_) {{
+                expand({types})
+            }}
+        }}
+    }}"""
+
+    # Perform query and raise HTTP exception if any error occurs
+    result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
+
+    # Remove neighbors that were not expanded (doesn't have the required dgraph.type)
+    neighbors = []
+    for uid_result in result["neighbors"]:
+        uid_result_reduced = {"uid": uid_result["uid"], "dgraph.type": uid_result["dgraph.type"]}
+        # Do not select any attribute values for the parent node
+        for attribute, value in uid_result.items():
+            if isinstance(value, List) and attribute != "dgraph.type":
+                value[:] = [x for x in value if len(x) > 2 ]
+                if len(value) > 0:
+                    uid_result_reduced[attribute] = value
+        neighbors.append(uid_result_reduced)
+
+    return {"response": neighbors}

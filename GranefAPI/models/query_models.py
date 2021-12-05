@@ -51,6 +51,10 @@ class UidsTimestampsRangeQuery(BaseModel):
 class AddressQuery(BaseModel):
     address: str = Field(None, example='192.168.15.0/24')
 
+class UidsTypeQuery(BaseModel):
+    uids: str = Field(None, example='0x12, 0x9c882')
+    types: str = Field(None, example='Dns, Host, Connection')
+
 class GeneralResponseDict(BaseModel):
     response: dict = Field(None, example='{"getHost": [{"host.ip": "192.168.0.2"}, {"host.ip": "192.168.1.16"}]}')
 
