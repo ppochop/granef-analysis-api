@@ -70,6 +70,9 @@ def validate(variable, type: str) -> bool:
     if type == "address":
         validation_result = is_address(variable)
         validation_fail_detail = f"Given address '{variable}' is not valid IPv4, IPv6 address, or CIDR notation."
+    elif type == "address_first" or type == "address_second":
+        validation_result = is_address(variable)
+        validation_fail_detail = f"Given address '{variable}' is not valid IPv4, IPv6 address, or CIDR notation."
 
     # Raise HTTPException if the validation failed
     if not validation_result:

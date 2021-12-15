@@ -60,3 +60,32 @@ class GeneralResponseDict(BaseModel):
 
 class GeneralResponseList(BaseModel):
     response: list = Field(None, example='[{"host.ip": "192.168.0.2"}, {"host.ip": "192.168.1.16"}]')
+
+class AddressTimestampQuery(BaseModel):
+    address: str = Field(None, example='192.168.1.16')
+    timestamp: str = Field(None, example='2008-07-22T01:51:07.095278Z')
+
+class AddressTimestampsQuery(BaseModel):
+    address: str = Field(None, example='192.168.1.16')
+    timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
+    timestamp_max: str = Field(None, example='2008-07-22T01:55')
+    
+class AddressProtocolQuery(BaseModel):
+    address: str = Field(None, example='192.168.1.16')
+    protocol: str = Field(None, example='HTTP')
+    
+class AdressesQuery(BaseModel):
+    address_first: str = Field(None, example='192.168.1.16')
+    address_second: str = Field(None, example='192.168.0.2')
+    
+class AdressesTimestampsQuery(BaseModel):
+    address_first: str = Field(None, example='192.168.1.16')
+    address_second: str = Field(None, example='192.168.0.2')
+    timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
+    timestamp_max: str = Field(None, example='2008-07-22T01:55')
+    
+class AdressProtocolTimestampsQuery(BaseModel):
+    address: str = Field(None, example='192.168.1.16')
+    protocol: str = Field(None, example='HTTP')
+    timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
+    timestamp_max: str = Field(None, example='2008-07-22T01:55')
