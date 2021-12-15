@@ -1,36 +1,56 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#
+# Granef -- graph-based network forensics toolkit
+# Copyright (C) 2020-2021  Aneta Jablunkova, Faculty of Informatics, Masaryk University
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
 """
-Definition of common network queries for Granef API.
+Definition of http network flow queries for Granef API.
 """
 
-import json  # Fast JSON parser
-from fastapi import APIRouter  # FastAPI modules
+# Common Python modules
+import json
+
+# FastAPI modules
+from fastapi import APIRouter
 from fastapi import HTTPException
 
-from models import query_models     # Custom GranefAPI models
-from utilities import validation
+# GranefAPI
+from models import query_models
+from utilities import validation, preprocessing
 from utilities.dgraph_client import DgraphClient
 
 # Initialize FastAPI router
 router = APIRouter()
 
 
-@router.get("/host_initiate_http", response_model=query_models.GeneralResponse, summary="List of IP addresses from subnet that initiated HTTP or HTTPS connection.")
-def connection_info(subnet_mask: str, type: str = "json", layout: str = "sfdp"):
+@router.post("/host_initiate_http", 
+    response_model=query_models.GeneralResponseList, 
+    summary="List of IP addresses from subnet that initiated HTTP or HTTPS connection.")
+def host_initiate_http(request: query_models.AddressQuery) -> dict:
 
-    if not validation.is_address(subnet_mask):
-        raise HTTPException(
-            status_code = 400,
-            detail = f"Given address {subnet_mask} is not valid IPv4, IPv6 address, or CIDR notation."
-        )
+    # Validate IP address and raise exception if not valid
+    validation.validate(request.address, "address")
 
     dgraph_client = DgraphClient()
     
-    query_variables = {subnet_mask: "string"}
     query = f"""{{
-        getOriginatedHostsHTTP(func: allof(host.ip, cidr, "{subnet_mask}")) {{
+        host_initiate_http(func: allof(host.ip, cidr, "{request.address}")) {{
             label : host.ip
             host.ip
             httpOrigNodes as math(1)
@@ -48,74 +68,56 @@ def connection_info(subnet_mask: str, type: str = "json", layout: str = "sfdp"):
     }}"""
 
     # Perform query and raise HTTP exception if any error occurs
-    try:
-        result = dgraph_client.query(query, query_variables)
-    except Exception as e:
-        raise HTTPException(
-            status_code = 500,
-            detail = str(e)
-        )
-    return {"response": json.loads(result)}
+    result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
+    return {"response": result["host_initiate_http"]}
 
 
-@router.get("/get_hostname", response_model=query_models.GeneralResponse, summary="List of the count of all HTTP hostnames.")
-def subnet_info(type: str = "json", layout: str = "sfdp"):
+@router.post("/get_hostname", 
+    response_model=query_models.GeneralResponseList, 
+    summary="List of the count of all HTTP hostnames.")
+def get_hostname() -> dict:
 
     dgraph_client = DgraphClient()
 
     query = f"""{{ 
-        getHttpHostname(func: type(HTTP_formats)) @groupby(HTTP_formats.HTTP_Hostname) {{
+        get_hostname(func: type(HTTP_formats)) @groupby(HTTP_formats.HTTP_Hostname) {{
             hostname_count : count(uid)
         }}
     }}"""
 
     # Perform query and raise HTTP exception if any error occurs
-    try:
-        result = dgraph_client.query(query)
-    except Exception as e:
-        raise HTTPException(
-            status_code = 500,
-            detail = str(e)
-        )
-    return {"response": json.loads(result)}
+    result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
+    return {"response": result["get_hostname"]}
 
 
-@router.get("/get_all_urls", response_model=query_models.GeneralResponse, summary="List of the count of all HTTP urls.")
-def subnet_info(type: str = "json", layout: str = "sfdp"):
+@router.post("/get_all_urls", 
+    response_model=query_models.GeneralResponseList, 
+    summary="List of the count of all HTTP urls.")
+def get_all_urls() -> dict:
 
     dgraph_client = DgraphClient()
 
     query = f"""{{ 
-        getHttpUri(func: type(HTTP_formats)) @groupby(HTTP_formats.HTTP_URL) {{
+        get_all_urls(func: type(HTTP_formats)) @groupby(HTTP_formats.HTTP_URL) {{
             uri_count : count(uid)
         }}
     }}"""
 
     # Perform query and raise HTTP exception if any error occurs
-    try:
-        result = dgraph_client.query(query)
-    except Exception as e:
-        raise HTTPException(
-            status_code = 500,
-            detail = str(e)
-        )
-    return {"response": json.loads(result)}
+    result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
+    return {"response": result["get_all_urls"]}
 
 
-@router.get("/http_count", response_model=query_models.GeneralResponse, summary="Return count of HTTP connections.")
-def subnet_info(host_ip: str, type: str = "json", layout: str = "sfdp"):
+@router.post("/http_count", response_model=query_models.GeneralResponseList, summary="Return count of HTTP connections.")
+def http_count(request: query_models.AddressQuery) -> dict:
 
-    if not validation.is_address(host_ip):
-        raise HTTPException(
-            status_code = 400,
-            detail = f"Given address {host_ip} is not valid IPv4, IPv6 address, or CIDR notation."
-        )
+    # Validate IP address and raise exception if not valid
+    validation.validate(request.address, "address")
 
     dgraph_client = DgraphClient()
 
-    query_variables = {host_ip: "string"}
     query = f"""{{ 
-        getHttpCount(func: eq(host.ip, "{host_ip}")) @normalize {{
+        http_count(func: eq(host.ip, "{request.address}")) @normalize {{
             label : host.ip
             host.ip
             httpOrigNodes as math(1)
@@ -142,11 +144,5 @@ def subnet_info(host_ip: str, type: str = "json", layout: str = "sfdp"):
     }}"""
 
     # Perform query and raise HTTP exception if any error occurs
-    try:
-        result = dgraph_client.query(query)
-    except Exception as e:
-        raise HTTPException(
-            status_code = 500,
-            detail = str(e)
-        )
-    return {"response": json.loads(result)}
+    result = json.loads(dgraph_client.query(preprocessing.add_default_attributes(query)))
+    return {"response": result["http_count"]}
