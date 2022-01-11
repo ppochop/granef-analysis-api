@@ -58,8 +58,8 @@ app = FastAPI(
 # Load API routers
 app.include_router(general_queries.router, tags=["General"])
 app.include_router(graph_queries.router, prefix="/graph", tags=["Graph queries"])
-app.include_router(flow_queries.router, prefix="/flow", tags=["Flow queries"])
-app.include_router(flow_http_queries.router, prefix="/flow_http", tags=["HTTP queries"])
+#app.include_router(flow_queries.router, prefix="/flow", tags=["Flow queries"])
+#app.include_router(flow_http_queries.router, prefix="/flow_http", tags=["HTTP queries"])
 app.include_router(overview_queries.router, prefix="/overview", tags=["Overview queries"])
 
 
