@@ -120,6 +120,8 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
                                 value_node["label"] = v
                                 break
                         uid_result_reduced[attribute] = value
+                else:
+                    uid_result_reduced[attribute] = value
             neighbors.append(uid_result_reduced)
         result = {"getAllNodeNeighbors": neighbors}    
 
