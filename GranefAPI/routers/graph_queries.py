@@ -37,14 +37,13 @@ def node_attributes(uid: str, return_type: str = "json", graph_layout: str = "sf
     summary="Get all node neighbors for a given node uid")
 def node_neighbors(uid: str, types: str, return_type: str = "json", graph_layout: str = "sfdp"):
     query_header = "query getAllNodeNeighbors($uid: string)"
-    query_body = """
-    {
-        getAllNodeNeighbors(func: uid($uid)) {
-            expand(_all_) {
+    query_body = """{{
+        getAllNodeNeighbors(func: uid($uid)) {{
+            expand(_all_) {{
                 expand({types})
-            }   
-        }
-    }
+            }}   
+        }}
+    }}
     """.format(types=types)
     variables_dict = {"$uid": uid}  
     return qutils.handle_query(query_body=query_body, query_header=query_header, variables=variables_dict, type=return_type, layout=graph_layout)
