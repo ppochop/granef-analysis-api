@@ -110,6 +110,7 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
             uid_result_reduced = {"uid": uid_result["uid"], "dgraph.type": uid_result["dgraph.type"]}
             # Do not select any attribute values for the parent node
             for attribute, value in uid_result.items():
+                no_label = True
                 if isinstance(value, List) and attribute != "dgraph.type":
                     value[:] = [x for x in value if len(x) > 2 ]
                     if len(value) > 0:
@@ -122,6 +123,9 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
                         uid_result_reduced[attribute] = value
                 else:
                     uid_result_reduced[attribute] = value
+                    if (not (attribute == "dgraph.type" or attribute == "uid")) and no_label:
+                        uid_result_reduced["label"] = value
+                        no_label = False
             neighbors.append(uid_result_reduced)
         result = {"getAllNodeNeighbors": neighbors}    
 
