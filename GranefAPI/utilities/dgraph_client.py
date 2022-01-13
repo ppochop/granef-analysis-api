@@ -67,7 +67,7 @@ class DgraphClient(metaclass=SingletonMeta):
 
         try:
             txn = self.dgraph.txn(read_only=True)
-            result = txn.query(query, variables)
+            result = txn.query(query, variables if not "hack" in variables else None)
         except Exception as e:
             raise RuntimeError("Dgraph query failed: " + str(e))
         finally:

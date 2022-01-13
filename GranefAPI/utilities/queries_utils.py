@@ -10,6 +10,7 @@ import ipaddress
 import socket
 from datetime import datetime
 import json
+from typing import List
 
 # FastAPI modules
 from fastapi import HTTPException
@@ -98,9 +99,23 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
     # Perform query and raise HTTP exception if any error occures
     try:
         # Preprocess query according to the query type
-        result = dgraph_client.query(processed_query_str, variables)
+        result = json.loads(dgraph_client.query(processed_query_str, variables))
     except Exception as e:
         raise_error(str(e))
 
+    if "hack" in variables:
+        # Remove neighbors that were not expanded (doesn't have the required dgraph.type)
+        neighbors = []
+        for uid_result in result["getAllNodeNeighbors"]:
+            uid_result_reduced = {"uid": uid_result["uid"], "dgraph.type": uid_result["dgraph.type"]}
+            # Do not select any attribute values for the parent node
+            for attribute, value in uid_result.items():
+                if isinstance(value, List) and attribute != "dgraph.type":
+                    value[:] = [x for x in value if len(x) > 2 ]
+                    if len(value) > 0:
+                        uid_result_reduced[attribute] = value
+            neighbors.append(uid_result_reduced)
+        result = {"getAllNodeNeighbors": neighbors}    
+
     # Process response accoring to the query type   
-    return {"response": dgraph_processing.process_response(response=json.loads(result))}
+    return {"response": dgraph_processing.process_response(response=result)}
