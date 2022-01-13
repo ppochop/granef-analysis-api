@@ -113,6 +113,12 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
                 if isinstance(value, List) and attribute != "dgraph.type":
                     value[:] = [x for x in value if len(x) > 2 ]
                     if len(value) > 0:
+                        for value_node in value:
+                            for k, v in value_node.items():
+                                if k == "dgraph.type" or k == "uid":
+                                    continue
+                                value_node["label"] = v
+                                break
                         uid_result_reduced[attribute] = value
             neighbors.append(uid_result_reduced)
         result = {"getAllNodeNeighbors": neighbors}    
