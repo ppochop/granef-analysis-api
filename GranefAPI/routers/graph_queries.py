@@ -44,6 +44,9 @@ def node_neighbors(uid: str, types: str, return_type: str = "json", graph_layout
             ioc {{
                 expand({types})
             }}
+            mis {{
+                expand({types})
+            }}
         }}
     }}
     """.format(uid=uid, types=types)
