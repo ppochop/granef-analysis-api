@@ -43,7 +43,6 @@ def node_neighbors(uid: str, types: str, return_type: str = "json", graph_layout
             }}
             ioc {{
                 expand({types}) {{
-                    label: misp.info
                     expand({types})
                 }}
             }}
