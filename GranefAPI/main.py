@@ -42,6 +42,18 @@ app.include_router(overview_queries.router, prefix="/overview", tags=["Overview 
 app.include_router(other_queries.router, tags=["General"])
 
 
+@app.middleware("http")
+async def add_my_headers(request: Request, call_next):
+    """
+    Specification of HTTP headers for all responses.
+    """
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = ["POST", "GET"]
+    return response
+
+
 @app.get("/", summary="Get API information", tags=["General"])
 def get_root(request: Request):
     """
@@ -78,15 +90,6 @@ if __name__ == "__main__":
     parser.add_argument("-dp", "--dgraph_port", help="Dgraph server port.", type=int, default=9080)
     global args
     args = parser.parse_args()
-
-    # Set HTTP headers and allow all connection
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
 
     # Initialize dgraph client
     dgraph_client = DgraphClient()
