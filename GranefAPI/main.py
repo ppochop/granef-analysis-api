@@ -50,7 +50,7 @@ async def add_my_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = ["POST", "GET"]
+    response.headers["Access-Control-Allow-Methods"] = "POST, GET"
     return response
 
 
