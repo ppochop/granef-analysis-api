@@ -40,7 +40,10 @@ def node_neighbors(uid: str, types: str, return_type: str = "json", graph_layout
         getAllNodeNeighbors(func: uid({uid})) {{
             expand(_all_) {{
                 expand({types})
-            }}   
+            }}
+            ioc {{
+                expand({types})
+            }}
         }}
     }}
     """.format(uid=uid, types=types)
