@@ -87,6 +87,9 @@ class DgraphDataProcessing:
         elif node_type == "File" or node_type == "User_Agent" or node_type == "Hostname" or node_type == "X509":
             # Gray
             return {"background": "#f5f5f5", "border": "#666666"}
+        elif node_type == "Ioc" or node_type == "Misp":
+            # Blue
+            return {"background": "#dae8fc", "border": "#6c8ebf"}
         else: 
             # Red as default color
             return {"background": "#f8cecc", "border": "#b85450"}
