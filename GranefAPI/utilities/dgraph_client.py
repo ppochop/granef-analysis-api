@@ -53,7 +53,7 @@ class DgraphClient(metaclass=SingletonMeta):
         ])
         self.dgraph = pydgraph.DgraphClient(self.client_stub)
 
-    def query(self, query: str, variables: dict = None) -> str:
+    def query(self, query: str, variables: dict = {}) -> str:
         """
         Perform query using established Dgraph connection. 
 
@@ -67,7 +67,7 @@ class DgraphClient(metaclass=SingletonMeta):
 
         try:
             txn = self.dgraph.txn(read_only=True)
-            result = txn.query(query, variables if not "hack" in variables else None)
+            result = txn.query(query, variables if not "hack" in variables else {})
         except Exception as e:
             raise RuntimeError("Dgraph query failed: " + str(e))
         finally:
