@@ -111,9 +111,10 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
             no_label = True
             # Do not select any attribute values for the parent node
             for attribute, value in uid_result.items():
-                if isinstance(value, List) and attribute != "dgraph.type" and attribute != "hostname.type":
+                if isinstance(value, List) and attribute not in ["dgraph.type", "hostname.type", "files.analyzers", "http.resp_mime_types", "notice.actions"]:
                     value[:] = [x for x in value if len(x) > 2 ]
                     if len(value) > 0:
+                        print(value)
                         for value_node in value:
                             for k, v in value_node.items():
                                 if k == "dgraph.type" or k == "uid":
