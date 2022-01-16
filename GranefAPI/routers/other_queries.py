@@ -23,18 +23,18 @@ router = APIRouter()
 
 
 @router.post("/custom_query", response_model=models.ResponseModel, summary="Perform custom query using Dgraph Query Language.")
-def custom_query(query: models.QueryModel):
+def custom_query(request: models.QueryModel):
     """
     General function to process any Dgraph query given as a string. Result is provided as simple
     JSON response or extended by graph data according to desired query type.
     """
     dgraph_client = DgraphClient()
-    dgraph_processing = DgraphDataProcessing(type=query.return_type, layout=query.graph_layout)
+    dgraph_processing = DgraphDataProcessing(type=request.return_type, layout=request.graph_layout)
 
     # Perform query and raise HTTP exception if any error occurs
     try:
         # Preprocess query according to the query type
-        result = dgraph_client.query(dgraph_processing.process_query(query.query))
+        result = dgraph_client.query(dgraph_processing.process_query(request.query))
     except Exception as e:
         qutils.raise_error(str(e))
 
