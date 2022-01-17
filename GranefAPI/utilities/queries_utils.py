@@ -143,7 +143,7 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
                     if len(value) > 0:
                         if type == "graph":
                             for value_node in value:
-                                value_node["label"] = get_label(uid_result)
+                                value_node["label"] = get_label(value_node)
                         uid_result_reduced[attribute] = value
                 else:
                     uid_result_reduced[attribute] = value
