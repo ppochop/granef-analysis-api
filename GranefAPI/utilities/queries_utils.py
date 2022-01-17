@@ -90,25 +90,25 @@ def raise_error(msg):
 def get_label(node):
     node_type = node["dgraph.type"][0]
     if node_type == "Connection":
-        return node["connection.proto"]
+        return node.get("connection.proto", node_type)
     elif node_type == "Host":
-        return node["host.ip"]
+        return node.get("host.ip", node_type)
     elif node_type == "Dns":
-        return node["dns.query"]
+        return node.get("dns.query", node_type)
     elif node_type == "Hostname":
-        return node["hostname.name"]
+        return node.get("hostname.name", node_type)
     elif node_type == "Files":
-        return node["files.mime_type"]
+        return node.get("files.mime_type", node_type)
     elif node_type == "File":
-        return node["file.mime_type"]
+        return node.get("file.mime_type", node_type)
     elif node_type == "Http":
-        return node["http.hostname"]
+        return node.get("http.hostname", node_type)
     elif node_type == "User_Agent":
-        return node["user_agent.name"]
+        return node.get("user_agent.name", node_type)
     elif node_type == "Ioc":
-        return node["ioc.value"]
+        return node.get("ioc.value", node_type)
     elif node_type == "Misp":
-        return node["misp.info"]
+        return node.get("misp.info", node_type)
     else:
         return node_type
 

@@ -27,7 +27,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Custom modules of Granef API
 from utilities.dgraph_client import DgraphClient
-from routers import graph_queries, overview_queries, other_queries
+from routers import graph_queries, overview_queries, other_queries, connection_queries
 
 
 # Application definition ("description" key may be added too).
@@ -40,6 +40,7 @@ app = FastAPI(
 # Load API routers
 app.include_router(graph_queries.router, prefix="/graph", tags=["Graph queries"])
 app.include_router(overview_queries.router, prefix="/overview", tags=["Overview queries"])
+app.include_router(connection_queries.router, prefix="/connection", tags=["Connection queries"])
 app.include_router(other_queries.router, tags=["General"])
 
 
