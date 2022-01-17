@@ -38,11 +38,19 @@ def node_attributes(uid: str, return_type: str = "json", graph_layout: str = "sf
 def node_neighbors(uid: str, types: str, return_type: str = "json", graph_layout: str = "sfdp"):
     query_body = """{{
         getAllNodeNeighbors(func: uid({uid})) {{
+            uid
+            dgraph.type
             expand(_all_) {{
+                uid
+                dgraph.type
                 expand({types})
             }}
             ioc {{
+                uid
+                dgraph.type
                 expand({types}) {{
+                    uid
+                    dgraph.type
                     expand({types})
                 }}
             }}

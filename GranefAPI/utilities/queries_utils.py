@@ -87,6 +87,32 @@ def raise_error(msg):
     )
 
 
+def get_label(node):
+    node_type = node["dgraph.type"][0]
+    if node_type == "Connection":
+        return node["connection.proto"]
+    elif node_type == "Host":
+        return node["host.ip"]
+    elif node_type == "Dns":
+        return node["dns.query"]
+    elif node_type == "Hostname":
+        return node["hostname.name"]
+    elif node_type == "Files":
+        return node["files.mime_type"]
+    elif node_type == "File":
+        return node["file.mime_type"]
+    elif node_type == "Http":
+        return node["http.hostname"]
+    elif node_type == "User_Agent":
+        return node["user_agent.name"]
+    elif node_type == "Ioc":
+        return node["ioc.value"]
+    elif node_type == "Misp":
+        return node["misp.info"]
+    else:
+        return node_type
+
+
 def handle_query(query_body: str, query_header: str = "", variables: dict = None, type: str = "json", layout: str = "sfdp"):
     """
     General function to process a Dgraph query. Result is provided as a JSON response or 
@@ -108,25 +134,19 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
         neighbors = []
         for uid_result in result["getAllNodeNeighbors"]:
             uid_result_reduced = {"uid": uid_result["uid"], "dgraph.type": uid_result["dgraph.type"]}
-            no_label = True
+            if type == "graph":
+                uid_result_reduced["label"] = get_label(uid_result)
             # Do not select any attribute values for the parent node
             for attribute, value in uid_result.items():
                 if isinstance(value, List) and attribute not in ["dgraph.type", "hostname.type", "files.analyzers", "http.resp_mime_types", "notice.actions"]:
                     value[:] = [x for x in value if len(x) > 2 ]
                     if len(value) > 0:
-                        print(value)
-                        for value_node in value:
-                            for k, v in value_node.items():
-                                if k == "dgraph.type" or k == "uid":
-                                    continue
-                                value_node["label"] = v
-                                break
+                        if type == "graph":
+                            for value_node in value:
+                                value_node["label"] = get_label(uid_result)
                         uid_result_reduced[attribute] = value
                 else:
                     uid_result_reduced[attribute] = value
-                    if (not (attribute == "dgraph.type" or attribute == "uid")) and no_label:
-                        uid_result_reduced["label"] = value
-                        no_label = False
             neighbors.append(uid_result_reduced)
         result = {"getAllNodeNeighbors": neighbors}    
 
