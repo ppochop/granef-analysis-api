@@ -201,17 +201,17 @@ def cluster_statistics(request: query_models.UidsQuery) -> dict:
     # Reformat the result for better processing
     cluster_stats = {
         "node": {
-            "type": {}
+            "type": None
         },
         "ioc": {
-            "type": {}
+            "type": None
         },
         "dns": {
-            "qtype": {}
+            "qtype": None
         },
         "http": {
-            "method": {},
-            "status": {}
+            "method": None,
+            "status": None
         },
         "file": {
             "bytes": {
@@ -219,7 +219,7 @@ def cluster_statistics(request: query_models.UidsQuery) -> dict:
                 "min": result["cluster_stats"][1].get("file_bytes_min", 0),
                 "avg": result["cluster_stats"][2].get("file_bytes_avg", 0)
             },
-            "mime_type": {}
+            "mime_type": None
         },
         "files": {
             "total_bytes": {
@@ -256,26 +256,42 @@ def cluster_statistics(request: query_models.UidsQuery) -> dict:
                 "min": result["cluster_stats"][19].get("conn_resp_bytes_min", 0),
                 "avg": result["cluster_stats"][20].get("conn_resp_bytes_avg", 0),
             },
-            "state": {},
-            "proto": {}
+            "state": None,
+            "proto": None
         }
     }
-    for node_type_count in result["node_type_count"][0]["@groupby"]:
-        cluster_stats["node"]["type"][node_type_count["dgraph.type"]] = node_type_count["node_type_count"]
-    for ioc_type_count in result["ioc_type_count"][0]["@groupby"]:
-        cluster_stats["ioc"]["type"][ioc_type_count["ioc.type"]] = ioc_type_count["ioc_type_count"]
-    for file_mime_count in result["file_mime_count"][0]["@groupby"]:
-        cluster_stats["file"]["mime_type"][file_mime_count["file.mime_type"]] = file_mime_count["file_mime_count"]
-    for dns_qtype_count in result["dns_qtype_count"][0]["@groupby"]:
-        cluster_stats["dns"]["qtype"][dns_qtype_count["dns.qtype_name"]] = dns_qtype_count["dns_qtype_count"]
-    for http_method_count in result["http_method_count"][0]["@groupby"]:
-        cluster_stats["http"]["method"][http_method_count["http.method"]] = http_method_count["http_method_count"]
-    for http_status_count in result["http_status_count"][0]["@groupby"]:
-        cluster_stats["http"]["status"][http_status_count["http.status_code"]] = http_status_count["http_status_count"]
-    for conn_state_count in result["conn_state_count"][0]["@groupby"]:
-        cluster_stats["connection"]["state"][conn_state_count["connection.conn_state"]] = conn_state_count["conn_state_count"]
-    for conn_proto_count in result["conn_proto_count"][0]["@groupby"]:
-        cluster_stats["connection"]["proto"][conn_proto_count["connection.proto"]] = conn_proto_count["conn_proto_count"]
+    if "node_type_count" in result:
+        cluster_stats["node"]["type"] = {}
+        for node_type_count in result["node_type_count"][0]["@groupby"]:
+            cluster_stats["node"]["type"][node_type_count["dgraph.type"]] = node_type_count["node_type_count"]
+    if "ioc_type_count" in result:
+        cluster_stats["ioc"]["type"] = {}
+        for ioc_type_count in result["ioc_type_count"][0]["@groupby"]:
+            cluster_stats["ioc"]["type"][ioc_type_count["ioc.type"]] = ioc_type_count["ioc_type_count"]
+    if "file_mime_count" in result:
+        cluster_stats["file"]["mime_type"] = {}
+        for file_mime_count in result["file_mime_count"][0]["@groupby"]:
+            cluster_stats["file"]["mime_type"][file_mime_count["file.mime_type"]] = file_mime_count["file_mime_count"]
+    if "dns_qtype_count" in result:
+        cluster_stats["dns"]["qtype"] = {}
+        for dns_qtype_count in result["dns_qtype_count"][0]["@groupby"]:
+            cluster_stats["dns"]["qtype"][dns_qtype_count["dns.qtype_name"]] = dns_qtype_count["dns_qtype_count"]
+    if "http_method_count" in result:
+        cluster_stats["http"]["method"] = {}
+        for http_method_count in result["http_method_count"][0]["@groupby"]:
+            cluster_stats["http"]["method"][http_method_count["http.method"]] = http_method_count["http_method_count"]
+    if "http_status_count" in result:
+        cluster_stats["http"]["status"] = {}
+        for http_status_count in result["http_status_count"][0]["@groupby"]:
+            cluster_stats["http"]["status"][http_status_count["http.status_code"]] = http_status_count["http_status_count"]
+    if "conn_state_count" in result:
+        cluster_stats["connection"]["state"] = {}
+        for conn_state_count in result["conn_state_count"][0]["@groupby"]:
+            cluster_stats["connection"]["state"][conn_state_count["connection.conn_state"]] = conn_state_count["conn_state_count"]
+    if "conn_proto_count" in result:
+        cluster_stats["connection"]["proto"] = {}
+        for conn_proto_count in result["conn_proto_count"][0]["@groupby"]:
+            cluster_stats["connection"]["proto"][conn_proto_count["connection.proto"]] = conn_proto_count["conn_proto_count"]
 
     return {"response": cluster_stats}
 
