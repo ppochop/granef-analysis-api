@@ -36,6 +36,7 @@ from fastapi import HTTPException
 from models import query_models
 from utilities import validation, preprocessing
 from utilities.dgraph_client import DgraphClient
+from .graph_queries import filter_uids
 
 
 # Initialize FastAPI router
@@ -306,8 +307,8 @@ def adjacency_matrix(request: query_models.UidsQuery) -> dict:
     """
     dgraph_client = DgraphClient()
 
-    # Split input to separate uids and iterate over each pair (naive approach)
-    uids = [x.strip() for x in request.uids.split(',')]
+    # Select Host uids and iterate over each pair (naive approach)
+    uids = filter_uids(query_models.UidsTypesQuery(uids=request.uids, types="Host"))
     connections = []
     for uid_pair in itertools.product(uids, repeat=2):
         # Don't make queries for same uids
@@ -316,7 +317,7 @@ def adjacency_matrix(request: query_models.UidsQuery) -> dict:
             continue
 
         query = f"""{{
-            var(func: uid({uid_pair[0]})) @filter(type(Host)) @cascade {{
+            var(func: uid({uid_pair[0]})) @cascade {{
                 originated as host.originated {{
 			        ~host.responded @filter(uid({uid_pair[1]}))
                 }}

@@ -51,7 +51,7 @@ class UidsTimestampsRangeQuery(BaseModel):
 class AddressQuery(BaseModel):
     address: str = Field(None, example='192.168.15.0/24')
 
-class UidsTypeQuery(BaseModel):
+class UidsTypesQuery(BaseModel):
     uids: str = Field(None, example='0x12, 0x9c882')
     types: str = Field(None, example='Dns, Host, Connection')
 

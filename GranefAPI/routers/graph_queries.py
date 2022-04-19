@@ -42,6 +42,31 @@ from utilities.dgraph_client import DgraphClient
 router = APIRouter()
 
 
+@router.post("/filter_uids",
+    response_model=query_models.GeneralResponseList,
+    summary="Filter given list of uids with defined types")
+def filter_uids(request: query_models.UidsTypesQuery) -> dict:
+    """
+    Selection of uids of defined node type.
+    """
+    dgraph_client = DgraphClient()
+
+    type_filter = "type(" + request.types.replace(",", ") or type(") + ")"
+    query = f"""{{
+        filterUids(func: uid({request.uids})) @filter({type_filter}) {{
+            uid
+        }} 
+    }}"""
+
+    # Perform query and raise HTTP exception if any error occurs
+    result = json.loads(dgraph_client.query(query))
+
+    # Extract uids
+    uids = [x["uid"] for x in result["filterUids"]]
+
+    return {"response": uids}
+
+
 @router.post("/node_attributes",
     response_model=query_models.GeneralResponseList, 
     summary="Get all node attributes for given nodes uid")
@@ -133,7 +158,7 @@ def uids_time_filter(request: query_models.UidsTimestampsRangeQuery) -> dict:
 @router.post("/neighbors",
     response_model=query_models.GeneralResponseList,
     summary="Return all details for neighbor nodes of a given type for a given set of uids")
-def neighbors(request: query_models.UidsTypeQuery) -> dict:
+def neighbors(request: query_models.UidsTypesQuery) -> dict:
     """
     Get all attributes for a given set of uids and their neighbors of a specified type defined in database schema (comma separated).
     If "types" attribute is not specified (or is empty), than the function returns all nodes regardless of their type.
