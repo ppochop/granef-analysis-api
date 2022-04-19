@@ -26,6 +26,7 @@ Definition of queries providing an overview of the network data.
 
 # Common Python modules
 import json
+import itertools
 
 # FastAPI modules
 from fastapi import APIRouter
@@ -277,3 +278,43 @@ def cluster_statistics(request: query_models.UidsQuery) -> dict:
         cluster_stats["connection"]["proto"][conn_proto_count["connection.proto"]] = conn_proto_count["conn_proto_count"]
 
     return {"response": cluster_stats}
+
+
+@router.post("/adjacency_matrix",
+    response_model=query_models.GeneralResponseDict,
+    summary="Count of connections between all Host nodes specified by uids")
+def adjacency_matrix(request: query_models.UidsQuery) -> dict:
+    """
+    Computes communication adjacency matrix for Hosts (specified by uids). Computes for each pair in the order
+    as the following example -- uids: 0x1,0x77, counts: 0x1-0x1, 0x1-0x77, 0x77-0x1, 0x77-0x77.
+    """
+    dgraph_client = DgraphClient()
+
+    # Split input to separate uids and iterate over each pair (naive approach)
+    uids = [x.strip() for x in request.uids.split(',')]
+    connections = []
+    for uid_pair in itertools.product(uids, repeat=2):
+        # Don't make queries for same uids
+        if uid_pair[0] == uid_pair[1]:
+            connections.append(0)
+            continue
+
+        query = f"""{{
+            var(func: uid({uid_pair[0]})) @filter(type(Host)) @cascade {{
+                originated as host.originated {{
+			        ~host.responded @filter(uid({uid_pair[1]}))
+                }}
+            }}
+            originated_connections(func: uid(originated)) {{
+		        connections : count(uid)
+            }}
+        }}"""
+
+        # Perform query and raise HTTP exception if any error occurs
+        result = json.loads(dgraph_client.query(query))
+        # Append result
+        connections.append(result["originated_connections"][0].get("connections",0))
+
+    # Split connections list to sub-lists according to the number of given uids
+    connections_matrix = [connections[i:i + len(uids)] for i in range(0, len(connections), len(uids))]
+    return {"response": {"uids": uids, "connections": connections_matrix}}
