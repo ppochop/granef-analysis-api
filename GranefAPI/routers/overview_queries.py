@@ -112,7 +112,7 @@ def connections_from_subnet(request: query_models.AddressQuery) -> dict:
 
 
 @router.post("/cluster_statistics",
-    response_model=query_models.GeneralResponseList,
+    response_model=query_models.GeneralResponseDict,
     summary="Statistics overview of a nodes cluster specified by uids")
 def cluster_statistics(request: query_models.UidsQuery) -> dict:
     """
