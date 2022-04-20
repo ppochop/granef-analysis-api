@@ -308,7 +308,7 @@ def adjacency_matrix(request: query_models.UidsQuery) -> dict:
     dgraph_client = DgraphClient()
 
     # Select Host uids and iterate over each pair (naive approach)
-    uids = filter_uids(query_models.UidsTypesQuery(uids=request.uids, types="Host"))
+    uids = filter_uids(query_models.UidsTypesQuery(uids=request.uids, types="Host"))["response"]
     connections = []
     for uid_pair in itertools.product(uids, repeat=2):
         # Don't make queries for same uids
@@ -333,5 +333,5 @@ def adjacency_matrix(request: query_models.UidsQuery) -> dict:
         connections.append(result["originated_connections"][0].get("connections",0))
 
     # Split connections list to sub-lists according to the number of given uids
-    connections_matrix = [connections[i:i + len(uids)] for i in range(0, len(connections), len(uids))]
+    connections_matrix = [connections[i:i + len(uids)] for i in range(0, len(connections), len(uids))] if len(uids) > 0 else []
     return {"response": {"uids": uids, "connections": connections_matrix}}
