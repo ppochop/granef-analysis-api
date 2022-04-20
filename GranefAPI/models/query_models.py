@@ -46,7 +46,7 @@ class AttributeValueQuery(BaseModel):
 class UidsTimestampsRangeQuery(BaseModel):
     uids: str = Field(None, example='0x12, 0x9c882')
     timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
-    timestamp_max: str = Field(None, example='2008-07-22T01:55')
+    timestamp_max: str = Field(None, example='2008-07-22T01:55:00')
 
 class AddressQuery(BaseModel):
     address: str = Field(None, example='192.168.15.0/24')
@@ -68,24 +68,24 @@ class AddressTimestampQuery(BaseModel):
 class AddressTimestampsQuery(BaseModel):
     address: str = Field(None, example='192.168.1.16')
     timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
-    timestamp_max: str = Field(None, example='2008-07-22T01:55')
+    timestamp_max: str = Field(None, example='2008-07-22T01:55:00')
     
 class AddressProtocolQuery(BaseModel):
     address: str = Field(None, example='192.168.1.16')
     protocol: str = Field(None, example='HTTP')
     
 class AdressesQuery(BaseModel):
-    address_first: str = Field(None, example='192.168.1.16')
-    address_second: str = Field(None, example='192.168.0.2')
+    address_orig: str = Field(None, example='192.168.1.16')
+    address_resp: str = Field(None, example='192.168.0.0/24')
     
 class AdressesTimestampsQuery(BaseModel):
-    address_first: str = Field(None, example='192.168.1.16')
-    address_second: str = Field(None, example='192.168.0.2')
+    address_orig: str = Field(None, example='192.168.1.16')
+    address_resp: str = Field(None, example='192.168.0.0/24')
     timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
-    timestamp_max: str = Field(None, example='2008-07-22T01:55')
+    timestamp_max: str = Field(None, example='2008-07-22T01:55:00')
     
 class AdressProtocolTimestampsQuery(BaseModel):
     address: str = Field(None, example='192.168.1.16')
     protocol: str = Field(None, example='HTTP')
     timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
-    timestamp_max: str = Field(None, example='2008-07-22T01:55')
+    timestamp_max: str = Field(None, example='2008-07-22T01:55:00')
