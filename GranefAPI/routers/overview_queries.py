@@ -299,27 +299,29 @@ def cluster_statistics(request: query_models.UidsQuery) -> dict:
 
 @router.post("/adjacency_matrix",
     response_model=query_models.GeneralResponseDict,
-    summary="Count of connections between all Host nodes specified by uids")
+    summary="Count of connections between all Host nodes, both specified by uids")
 def adjacency_matrix(request: query_models.UidsQuery) -> dict:
     """
-    Computes communication adjacency matrix for Hosts (specified by uids). Computes for each pair in the order
+    Computes communication adjacency matrix for Hosts and Connections (specified by uids). Computes for each pair in the order
     as the following example -- uids: 0x1,0x77, counts: 0x1-0x1, 0x1-0x77, 0x77-0x1, 0x77-0x77.
     """
     dgraph_client = DgraphClient()
 
-    # Select Host uids and iterate over each pair (naive approach)
-    uids = filter_uids(query_models.UidsTypesQuery(uids=request.uids, types="Host"))["response"]
+
+    # Select Connection and Host uids and iterate over each host pair (naive approach)
+    connection_uids = ",".join(filter_uids(query_models.UidsTypesQuery(uids=request.uids, types="Connection"))["response"])
+    host_uids = filter_uids(query_models.UidsTypesQuery(uids=request.uids, types="Host"))["response"]
     connections = []
-    for uid_pair in itertools.product(uids, repeat=2):
+    for host_uid_pair in itertools.product(host_uids, repeat=2):
         # Don't make queries for same uids
-        if uid_pair[0] == uid_pair[1]:
+        if host_uid_pair[0] == host_uid_pair[1]:
             connections.append(0)
             continue
 
         query = f"""{{
-            var(func: uid({uid_pair[0]})) @cascade {{
-                originated as host.originated {{
-			        ~host.responded @filter(uid({uid_pair[1]}))
+            var(func: uid({host_uid_pair[0]})) @cascade {{
+                originated as host.originated @filter(uid({connection_uids})) {{
+			        ~host.responded @filter(uid({host_uid_pair[1]}))
                 }}
             }}
             originated_connections(func: uid(originated)) {{
@@ -333,5 +335,5 @@ def adjacency_matrix(request: query_models.UidsQuery) -> dict:
         connections.append(result["originated_connections"][0].get("connections",0))
 
     # Split connections list to sub-lists according to the number of given uids
-    connections_matrix = [connections[i:i + len(uids)] for i in range(0, len(connections), len(uids))] if len(uids) > 0 else []
-    return {"response": {"uids": uids, "connections": connections_matrix}}
+    connections_matrix = [connections[i:i + len(host_uids)] for i in range(0, len(connections), len(host_uids))] if len(host_uids) > 0 else []
+    return {"response": {"uids": host_uids, "connections": connections_matrix}}
