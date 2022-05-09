@@ -51,12 +51,12 @@ def hosts_info(request: query_models.AddressQuery) -> dict:
     Get detailed attributes and statitsics about hosts in the given network range.
     """
     # Validate IP address and raise exception if not valid
-    validation.validate(request.address, "address")
+    validation.validate(request.address.strip(), "address")
     
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        hosts_info(func: allof(host.ip, cidr, "{request.address}")) {{
+        hosts_info(func: allof(host.ip, cidr, "{request.address.strip()}")) {{
             host.ip
             host.hostname {{
                 hostname.name
@@ -88,12 +88,12 @@ def connections_from_subnet(request: query_models.AddressQuery) -> dict:
     Get all connections within the given subnet.
     """
     # Validate IP address and raise exception if not valid
-    validation.validate(request.address, "address")
+    validation.validate(request.address.strip(), "address")
 
     dgraph_client = DgraphClient()
 
     query = f"""{{
-	    connections_from_subnet(func: allof(host.ip, cidr, "{request.address}")) @cascade {{
+	    connections_from_subnet(func: allof(host.ip, cidr, "{request.address.strip()}")) @cascade {{
             host.ip
             host.originated {{
                 connection.ts

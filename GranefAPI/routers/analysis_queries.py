@@ -53,10 +53,10 @@ def connections_search(request: query_models.AdressesTimestampsQuery) -> dict:
     are returned.
     """
     # Set default request values
-    address_orig = request.address_orig if request.address_orig else "0.0.0.0/0"
-    address_resp = request.address_resp if request.address_resp else "0.0.0.0/0"
-    timestamp_min = request.timestamp_min if request.timestamp_min else "1970-01-01T00:00:00"
-    timestamp_max = request.timestamp_max if request.timestamp_max else "3000-01-01T00:00:00"
+    address_orig = request.address_orig.strip() if request.address_orig else "0.0.0.0/0"
+    address_resp = request.address_resp.strip() if request.address_resp else "0.0.0.0/0"
+    timestamp_min = request.timestamp_min.strip() if request.timestamp_min else "1970-01-01T00:00:00"
+    timestamp_max = request.timestamp_max.strip() if request.timestamp_max else "3000-01-01T00:00:00"
 
     # Validate IP address and raise exception if not valid
     validation.validate(address_orig, "address")
