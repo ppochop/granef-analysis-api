@@ -52,7 +52,7 @@ from routers import general_queries, overview_queries, graph_queries, analysis_q
 # Application definition ("description" key may be added too).
 app = FastAPI(
     title="Granef API",
-    version="0.5",
+    version="0.8",
 )
 
 # Load API routers
