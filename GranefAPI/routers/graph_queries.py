@@ -173,6 +173,15 @@ def neighbors(request: query_models.UidsTypesQuery) -> dict:
             expand(_all_) {{
                 expand({types})
             }}
+            ioc {{
+                uid
+                dgraph.type
+                expand({types}) {{
+                    uid
+                    dgraph.type
+                    expand({types})
+                }}
+            }}
         }}
     }}"""
 
