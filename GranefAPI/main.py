@@ -1,15 +1,34 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#
+# Granef -- graph-based network forensics toolkit
+# Copyright (C) 2020-2021  Milan Cermak, Institute of Computer Science of Masaryk University
+# Copyright (C) 2020-2021  Denisa Sramkova, Institute of Computer Science of Masaryk University
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
 
-"""
-Granef API to perform Dgraph queries and provide responses with defined layout.
+
+"""Granef API to perform Dgraph queries and provide responses with defined layout.
 
 The default configuration exposes API at 127.0.0.1:7000. To access Swagger documentation visit
 http://127.0.0.1:7000/docs.
 
-Usage:  $ python3 main.py
-        $ python3 main.py --ip "172.23.79.229"
+Examples:
+    $ python3 main.py
+    $ python3 main.py --ip "172.23.79.229"
 """
 
 #
@@ -27,37 +46,24 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Custom modules of Granef API
 from utilities.dgraph_client import DgraphClient
-from routers import graph_queries, overview_queries, other_queries, connection_queries
+from routers import general_queries, overview_queries, graph_queries, analysis_queries
 
 
 # Application definition ("description" key may be added too).
 app = FastAPI(
     title="Granef API",
-    version="0.3.1",
+    version="0.8",
 )
 
-
 # Load API routers
+app.include_router(general_queries.router, tags=["General"])
 app.include_router(graph_queries.router, prefix="/graph", tags=["Graph queries"])
 app.include_router(overview_queries.router, prefix="/overview", tags=["Overview queries"])
-app.include_router(connection_queries.router, prefix="/connection", tags=["Connection queries"])
-app.include_router(other_queries.router, tags=["General"])
-
-
-@app.middleware("http")
-async def add_my_headers(request: Request, call_next):
-    """
-    Specification of HTTP headers for all responses.
-    """
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-    return response
+app.include_router(analysis_queries.router, prefix="/analysis", tags=["Analysis queries"])
 
 
 @app.get("/", summary="Get API information", tags=["General"])
-def get_root(request: Request):
+def get_root(request: Request) -> dict:
     """
     Default function to show Granef API name, version, and Swagger URL when root path is requested.
     """
@@ -65,11 +71,11 @@ def get_root(request: Request):
     return {"name": app.title, "version": app.version, "swagger": swagger_path}
 
 
-@app.get("/connect", summary="Establish connection to Dgraph database", tags=["General"])
-def dgraph_connect():
+@app.get("/connect", summary="Re-establish connection to the Dgraph database server", tags=["General"])
+def dgraph_connect() -> dict:
     """
-    Establish connection to Dgraph database server. When API starts the connection is automatically
-    established. Call this function onl if some connection error occurred.
+    The connection is automatically established with Granef API start. Call this function only if some
+    connection error occurred.
     """
     dgraph_client = DgraphClient()
     try:
