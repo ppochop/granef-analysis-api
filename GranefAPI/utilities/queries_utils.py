@@ -88,6 +88,7 @@ def raise_error(msg):
 
 
 def get_label(node):
+    print(node)
     node_type = node["dgraph.type"][0]
     if node_type == "Connection":
         return node.get("connection.proto", node_type)
@@ -138,7 +139,7 @@ def handle_query(query_body: str, query_header: str = "", variables: dict = None
                 uid_result_reduced["label"] = get_label(uid_result)
             # Do not select any attribute values for the parent node
             for attribute, value in uid_result.items():
-                if isinstance(value, List) and attribute not in ["dgraph.type", "hostname.type", "files.analyzers", "http.resp_mime_types", "notice.actions"]:
+                if isinstance(value, List) and attribute not in ["dgraph.type", "hostname.type", "files.analyzers", "http.resp_mime_types", "notice.actions", "dns.answers"]:
                     value[:] = [x for x in value if len(x) > 2 ]
                     if len(value) > 0:
                         if type == "graph":
