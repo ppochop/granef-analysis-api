@@ -36,8 +36,8 @@ Examples:
 #
 
 
-# Common Python modules
-import argparse
+import argparse             # Arguments parser
+import logging, coloredlogs                 # Standard logging functionality with colors functionality
 
 # Modules required to run FastAPI
 import uvicorn  # Python web server
@@ -96,8 +96,13 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--port", help="Port to bind the API web server.", type=int, default=7000)
     parser.add_argument("-di", "--dgraph_ip", help="Dgraph server IP addres.", type=str, default="alpha")
     parser.add_argument("-dp", "--dgraph_port", help="Dgraph server port.", type=int, default=9080)
+    parser.add_argument("-l", "--log", choices=["debug", "info", "warning", "error", "critical"], help="Log level", required=False, default="INFO")
     global args
     args = parser.parse_args()
+
+    # Set logging
+    logger = logging.getLogger("granef-analysis-api")
+    coloredlogs.install(level=getattr(logging, args.log.upper()), fmt="%(asctime)s %(name)s [%(levelname)s]: %(message)s")
 
     # Set HTTP headers and allow all connection
     app.add_middleware(

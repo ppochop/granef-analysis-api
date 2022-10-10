@@ -5,3 +5,4 @@ argparse
 gunicorn
 ipaddress
 typing-extensions
+coloredlogs
