@@ -66,6 +66,10 @@ def hosts_info(request: query_models.AddressQuery) -> dict:
                 user_agent.name
                 user_agent.type
             }}
+            host.software {{
+                software.software_type
+                software.unparsed_version
+            }}
             obtained_file_count : count(host.obtained)
             provided_file_count : count(host.provided)
             communicated_count : count(host.communicated)
