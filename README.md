@@ -7,7 +7,7 @@
   
 The Analysis API Module is used to perform queries on a running instance of the [Dgraph](https://dgraph.io/) graph database. A set of predefined queries is available, which can be easily extended by new queries. A custom query can be defined by the user as well. 
 
-It is used by the [Analysis Web Module](https://gitlab.ics.muni.cz/granef/web), which extends the usage of this module by a friendly user interface.
+It is used by the [Analysis Web Module](https://gitlab.ics.muni.cz/granef/analysis-web-v2), which extends the usage of this module by a friendly user interface.
 
 ### Requirements
 
