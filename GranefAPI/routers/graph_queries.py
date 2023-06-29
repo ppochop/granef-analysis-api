@@ -97,7 +97,7 @@ def attribute_search(request: query_models.AttributeValueQuery) -> dict:
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        attribute_search(func: has({request.attribute})) @filter(eq({request.attribute}, {request.value})) {{
+        attribute_search(func: has({request.attribute})) @filter(eq({request.attribute}, "{request.value}")) {{
             expand(_all_)
         }} 
     }}"""
