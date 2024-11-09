@@ -89,3 +89,7 @@ class AdressProtocolTimestampsQuery(BaseModel):
     protocol: str = Field(None, example='HTTP')
     timestamp_min: str = Field(None, example='2008-07-22T01:51:07.095278Z')
     timestamp_max: str = Field(None, example='2008-07-22T01:55:00')
+
+class AlertFilterQuery(BaseModel):
+    severity: int = Field(0, example='5')
+    regexp: str = Field(None, example='/JA3/')
