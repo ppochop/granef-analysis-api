@@ -2,7 +2,7 @@
 /.venv
 
 # Ignore directory by Visual Studio Code
-.vscode
+/.vscode
 
 # Ignore all Python cache files
 *.pyc
