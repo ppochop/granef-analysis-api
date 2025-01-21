@@ -22,15 +22,15 @@ router = APIRouter()
     summary="Get connections and hosts according to defined criteria.")
 def connections_search(src_ip: str, dst_ip: str, timestamp_from: str, timestamp_to: str, return_type: str = "json", graph_layout: str = "sfdp"):
     query_body = """{{
-        connection(func: allof(host.ip, cidr, "{src_ip}")) @cascade {{
-            label: host.ip
-            host.ip
-            host.originated @filter(between(connection.ts, "{timestamp_from}", "{timestamp_to}")) {{
-                label: connection.proto
-                connection.ts
-                ~host.responded @filter(allof(host.ip, cidr, "{dst_ip}")) {{
-                    label: host.ip
-                    host.ip
+        connection(func: allof(Host.ip, cidr, "{src_ip}")) @cascade {{
+            label: Host.ip
+            Host.ip
+            <~FlowRec.originated_by> @filter(between(FlowRec.first_ts, "{timestamp_from}", "{timestamp_to}")) {{
+                label: FlowRec.protocol
+                FlowRec.first_ts
+                FlowRec.received_by @filter(allof(Host.ip, cidr, "{dst_ip}")) {{
+                    label: Host.ip
+                    Host.ip
                 }}
             }}
         }}
