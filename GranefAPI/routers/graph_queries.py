@@ -109,7 +109,7 @@ def attribute_search(request: query_models.AttributeValueQuery) -> dict:
 
 @router.post("/uids_time_range",
     response_model=query_models.GeneralResponseDict,
-    summary="Return minimal and maximal connection.ts for given uids")
+    summary="Return minimal and maximal timestamps for given uids")
 def uids_time_range(request: query_models.UidsQuery) -> dict:
     """
     Get min and max connection.ts for a given list of uids (comma separated). Return null values if no uid with connection.ts attribute was found.
@@ -118,11 +118,12 @@ def uids_time_range(request: query_models.UidsQuery) -> dict:
 
     query = f"""{{
         var(func: uid({request.uids})) {{
-		    time as connection.ts
+		    first_ts as FlowRec.first_ts
+            last_ts as FlowRec.last_ts
         }}
         uids_time_range() {{
-		    connection.ts.min: min(val(time))
-            connection.ts.max: max(val(time))
+		    connection.ts.min: min(val(first_ts))
+            connection.ts.max: max(val(last_ts))
         }}
     }}"""
 
@@ -135,7 +136,7 @@ def uids_time_range(request: query_models.UidsQuery) -> dict:
 
 @router.post("/uids_timestamp_filter",
     response_model=query_models.GeneralResponseDict,
-    summary="Filter given uids and return only one in the given time range")
+    summary="Filter given uids and return only those in the given time range")
 def uids_time_filter(request: query_models.UidsTimestampsRangeQuery) -> dict:
     """
     Select uids from the given list of uids (comma separated) that match the given timestamp range. Return empty array if no uid match the timestamp range.
@@ -143,7 +144,7 @@ def uids_time_filter(request: query_models.UidsTimestampsRangeQuery) -> dict:
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        uids_timestamp_filter(func: uid({request.uids})) @filter(ge(connection.ts, "{request.timestamp_min}") and le(connection.ts, "{request.timestamp_max}")) {{
+        uids_timestamp_filter(func: uid({request.uids})) @filter(ge(FlowRec.last_ts, "{request.timestamp_min}") and le(FlowRec.first_ts, "{request.timestamp_max}")) {{
 		    uid
         }}
     }}"""
@@ -172,15 +173,6 @@ def neighbors(request: query_models.UidsTypesQuery) -> dict:
         neighbors(func: uid({request.uids})) {{
             expand(_all_) {{
                 expand({types})
-            }}
-            ioc {{
-                uid
-                dgraph.type
-                expand({types}) {{
-                    uid
-                    dgraph.type
-                    expand({types})
-                }}
             }}
         }}
     }}"""

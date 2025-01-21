@@ -65,16 +65,15 @@ def connections_search(request: query_models.AdressesTimestampsQuery) -> dict:
     dgraph_client = DgraphClient()
 
     query = f"""{{
-        connections_search(func: allof(host.ip, cidr, "{address_orig}")) @cascade {{
-            host.ip
-            host.originated @filter(ge(connection.ts, "{timestamp_min}") and le(connection.ts, "{timestamp_max}")) {{
-			    connection.ts
-                connection.orig_p
-                connection.resp_p
-                connection.proto
-                connection.conn_state
-                ~host.responded @filter(allof(host.ip, cidr, "{address_resp}")) {{
-				    host.ip
+        connections_search(func: allof(Host.ip, cidr, "{address_orig}")) @cascade {{
+            Host.ip
+            <~FlowRec.originated_by> @filter(ge(FlowRec.first_ts, "{timestamp_min}") and le(FlowRec.first_ts, "{timestamp_max}")) {{
+			    FlowRec.first_ts
+                FlowRec.orig_port
+                FlowRec.recv_port
+                FlowRec.protocol
+                FlowRec.received_by @filter(allof(Host.ip, cidr, "{address_resp}")) {{
+				    Host.ip
                 }}
             }}
         }}

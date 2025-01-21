@@ -34,13 +34,13 @@ from typing import Optional
 
 
 class CustomQuery(BaseModel):
-    query: str = Field(None, example='{getHost(func: allof(host.ip, cidr, "192.168.0.0/16")) {host.ip}}')
+    query: str = Field(None, example='{getHost(func: allof(Host.ip, cidr, "192.168.0.0/16")) {Host.ip}}')
 
 class UidsQuery(BaseModel):
     uids: str = Field(None, example='0x12, 0x9c882')
 
 class AttributeValueQuery(BaseModel):
-    attribute: str = Field(None, example='connection.proto')
+    attribute: str = Field(None, example='FlowRec.protocol')
     value: str = Field(None, example='tcp')
 
 class UidsTimestampsRangeQuery(BaseModel):
@@ -53,13 +53,13 @@ class AddressQuery(BaseModel):
 
 class UidsTypesQuery(BaseModel):
     uids: str = Field(None, example='0x12, 0x9c882')
-    types: str = Field(None, example='Dns, Host, Connection')
+    types: str = Field(None, example='DNS, Host, FlowRec')
 
 class GeneralResponseDict(BaseModel):
-    response: dict = Field(None, example='{"getHost": [{"host.ip": "192.168.0.2"}, {"host.ip": "192.168.1.16"}]}')
+    response: dict = Field(None, example='{"getHost": [{"Host.ip": "192.168.0.2"}, {"Host.ip": "192.168.1.16"}]}')
 
 class GeneralResponseList(BaseModel):
-    response: list = Field(None, example='[{"host.ip": "192.168.0.2"}, {"host.ip": "192.168.1.16"}]')
+    response: list = Field(None, example='[{"Host.ip": "192.168.0.2"}, {"Host.ip": "192.168.1.16"}]')
 
 class AddressTimestampQuery(BaseModel):
     address: str = Field(None, example='192.168.1.16')
