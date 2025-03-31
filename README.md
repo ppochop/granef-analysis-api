@@ -1,53 +1,33 @@
+# GRANEF Analysis API module, flow2granef thesis version
 
-<img  src="https://is.muni.cz/www/milan.cermak/granef/granef-logo.svg"  height="60px">
-
-[**Graph-Based Network Forensics**](https://gitlab.ics.muni.cz/granef/granef)**: Analysis API**
-
----
-  
-The Analysis API Module is used to perform queries on a running instance of the [Dgraph](https://dgraph.io/) graph database. A set of predefined queries is available, which can be easily extended by new queries. A custom query can be defined by the user as well. 
-
-It is used by the [Analysis Web Module](https://gitlab.ics.muni.cz/granef/analysis-web-v2), which extends the usage of this module by a friendly user interface.
+This is a fork of the [Analysis API module](https://gitlab.ics.muni.cz/granef/analysis/api) of [GRANEF](https://granef.csirt.muni.cz/). Its functionality is the same but this repo contains changes written to ensure compatibility with [flow2granef]. Please see and use the original version unless you are planning to use *flow2granef*.
 
 ### Requirements
 
-- a running instance of Dgraph
+- a running instance of Dgraph (see next section for a quickstart)
 - Docker 
 - Python3
 - Python3 packages in [requirements.txt](requirements.txt)
 
-The installation can be performed using the following command:
-
+### Run dgraph quickstart
+NB: This is just a quickstart deployment, see the [official docs](https://docs.hypermode.com/dgraph/overview) for more thorough guidance.
+1. Run dgraph zero:
 ```bash
-$ git clone https://gitlab.ics.muni.cz/granef/analysis-api.git
+$ docker run --rm -d --name zero -h zero -p 5080:5080 --network granef -p 6080:6080 -v ~/zero_data:/dgraph dgraph/dgraph:latest dgraph zero --my=zero:5080 --telemetry "sentry=false;"
 ```
+2. Run dgraph alpha:
+```bash
+$ docker run --rm -d --name alpha1 -h alpha1 -p 7080:7080 --network granef -p 8080:8080 -p 9080:9080 -v ~/plugins:/plugins -v ~/alpha_data1:/dgraph dgraph/dgraph:latest dgraph alpha --zero=zero:5080 --my=alpha1:7080 --custom_tokenizers=/plugins/cidr-plugin.so --security whitelist=0.0.0.0/0 --telemetry "sentry=false;"
+```
+NOTE: the plugins have to be built with the same golang version as dgraph
 
-Use the following command to build the Docker container:
-
+### Usage
+1. Clone this repository. Make sure you are using the right branch/version (coresponding to the version of *flow2granef*).
+2. Build the docker image:
 ```bash
 $ docker build --tag=granef/analysis-api .
 ```
-
-### Usage
-
-The Docker container can be either run separately with command line arguments or as part of the Granef toolkit with arguments set in the [granef.yml](https://gitlab.ics.muni.cz/granef/granef/-/blob/master/granef.yml) configuration file. 
-
-The following arguments can be set:
-
-| Short argument | Long argument | Description | Default | 
-|-|-|-|-|
-|`-i`|`--input`|Dummy argument (requested by the GRANEF toolkit)||
-|`-ip`|`--ip`|IP address to bind the API web server|`0.0.0.0`|
-|`-p`|`--port`|Port to bind the API web server|`7000`|
-|`-di`|`--dgraph_ip`|Dgraph server IP addres|`alpha`|
-|`-dp`|`--dgraph_port`|Dgraph server port|`9080`|
-
-Use the following command to run the API:
-
+3. Run the API module:
 ```bash
-$ docker run --rm --network granef -p 127.0.0.1:7000:7000 granef/analysis-api -ip 0.0.0.0 -p 7000 -di alpha -dp 9080
+$ docker run -d --rm --name analysis-api -h analysis-api --network granef -p 127.0.0.1:7000:7000 granef/analysis-api -ip 0.0.0.0 -p 7000 -di alpha1 -dp 9080
 ```
-
-The API is then available at [http://127.0.0.1:7000](http://127.0.0.1:7000).
-
-
